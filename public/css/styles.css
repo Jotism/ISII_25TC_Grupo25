@@ -276,3 +276,57 @@ tbody tr:hover td {
 .volver:hover {
     text-decoration: underline;
 }
+
+/* -------------------------------------------------------
+   10. PANEL ADMIN — estilos para el CRUD de materias
+------------------------------------------------------- */
+
+.contenido--ancho {
+    max-width: 900px;
+}
+
+.panel-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.panel-encabezado h2 {
+    margin-bottom: 0; 
+}
+
+.acciones {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-accion {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-accion--azul  { background: #3a7bd5; }
+.btn-accion--azul:hover  { background: #2f63b0; }
+
+.btn-accion--verde { background: #27ae60; }
+.btn-accion--verde:hover { background: #219a52; }
+
+.btn-accion--rojo  { background: #e74c3c; }
+.btn-accion--rojo:hover  { background: #c0392b; }
+
+select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    background: #fff;
+}
