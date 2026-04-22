@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Materias Disponibles</title>
-    <!--
-        VISTA: materias.php
-        Ubicación: app/Views/materias.php
-        CSS externo: public/css/styles.css
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body>

@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
-    <!--
-        VISTA: login.php
-        Ubicación: app/Views/login.php
-        CSS externo: public/css/styles.css
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body class="centrado">

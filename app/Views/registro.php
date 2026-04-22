@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro</title>
-    <!--
-        VISTA: registro.php
-        Ubicación: app/Views/registro.php
-        CSS externo: public/css/styles.css
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body class="centrado">
