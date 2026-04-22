@@ -1,0 +1,299 @@
+/*
+ * =============================================================
+ *  styles.css  —  CSS global del Sistema Académico
+ * =============================================================
+ *  Ubicación en el proyecto:  public/css/styles.css
+ *  Cómo se vincula en las vistas:
+ *      <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
+ *
+ *  Secciones:
+ *    1. Reset y base
+ *    2. Header (barra superior)
+ *    3. Layout / contenedores
+ *    4. Card  (login y registro)
+ *    5. Formularios
+ *    6. Botones
+ *    7. Mensajes (error / éxito)
+ *    8. Tabla de materias
+ *    9. Utilidades
+ * =============================================================
+ */
+
+
+/* -------------------------------------------------------
+   1. RESET Y BASE
+   Elimina márgenes y padding predeterminados del navegador.
+   Define la fuente y el color de fondo general.
+------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+}
+
+/* Variante: body centrado verticalmente (usado en login y registro) */
+body.centrado {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* -------------------------------------------------------
+   2. HEADER — barra superior azul
+   Aparece en dashboard.php y materias.php
+------------------------------------------------------- */
+header {
+    background: #3a7bd5;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header span {
+    font-size: 0.9rem;
+}
+
+header a {
+    color: #fff;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+
+/* -------------------------------------------------------
+   3. LAYOUT / CONTENEDORES
+   .contenido        → bloque central con fondo blanco
+   .contenido--centrado → además lo centra horizontalmente
+------------------------------------------------------- */
+.contenido {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contenido--centrado {
+    max-width: 600px;
+    text-align: center;
+}
+
+.contenido h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.contenido p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.contenido h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+
+/* -------------------------------------------------------
+   4. CARD — caja flotante para login y registro
+   .card        → tamaño estándar (login)
+   .card--wide  → un poco más ancha (registro)
+------------------------------------------------------- */
+.card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 380px;
+}
+
+.card--wide {
+    max-width: 420px;
+}
+
+.card h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #333;
+}
+
+
+/* -------------------------------------------------------
+   5. FORMULARIOS — inputs y labels
+------------------------------------------------------- */
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+
+/* -------------------------------------------------------
+   6. BOTONES
+   .btn          → base común
+   .btn--azul    → acción principal (login)
+   .btn--verde   → acción de creación (registro)
+   .btn-materias → botón de enlace del dashboard
+------------------------------------------------------- */
+.btn {
+    width: 100%;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+}
+
+.btn--azul {
+    background: #3a7bd5;
+}
+
+.btn--azul:hover {
+    background: #2f63b0;
+}
+
+.btn--verde {
+    background: #27ae60;
+}
+
+.btn--verde:hover {
+    background: #219a52;
+}
+
+/* Botón-enlace del dashboard */
+.btn-materias {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: #3a7bd5;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.btn-materias:hover {
+    background: #2f63b0;
+}
+
+
+/* -------------------------------------------------------
+   7. MENSAJES — alertas de error y éxito
+------------------------------------------------------- */
+.mensaje-error {
+    background: #fde8e8;
+    color: #c0392b;
+    padding: 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.mensaje-exito {
+    background: #e8f5e9;
+    color: #27ae60;
+    padding: 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+
+/* -------------------------------------------------------
+   8. TABLA DE MATERIAS (materias.php)
+------------------------------------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #3a7bd5;
+    color: #fff;
+}
+
+th,
+td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover td {
+    background: #f7f9ff;
+}
+
+/* Sin resultados */
+.sin-materias {
+    color: #888;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Badge de cuatrimestre */
+.badge {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #3a7bd5;
+    border-radius: 12px;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+
+/* -------------------------------------------------------
+   9. UTILIDADES
+------------------------------------------------------- */
+
+/* Enlace de navegación inferior (ej: "¿No tenés cuenta?") */
+.enlace {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.enlace a {
+    color: #3a7bd5;
+    text-decoration: none;
+}
+
+.enlace a:hover {
+    text-decoration: underline;
+}
+
+/* Enlace "← Volver" en materias.php */
+.volver {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: #3a7bd5;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.volver:hover {
+    text-decoration: underline;
+}
