@@ -1,71 +1,162 @@
-<<<<<<< HEAD
-# CodeIgniter 4 Application Starter
+# Anexo B – Manual de Instalación y Configuración del Sistema
 
-## What is CodeIgniter?
+## 1. Introducción
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+El presente documento describe los pasos necesarios para la instalación, configuración y puesta en marcha del sistema **GestAcad**, desarrollado como una aplicación web para la gestión académica.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## 2. Objetivo
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+Brindar una guía clara para que cualquier usuario con conocimientos básicos pueda configurar el entorno y ejecutar el sistema correctamente.
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+## 3. Requisitos Previos
 
-## Installation & updates
+### Software necesario
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+* PHP 8.x
+* Servidor local (por ejemplo: XAMPP o similar)
+* Git (para clonar el repositorio)
+* Navegador web (Chrome, Edge, etc.)
+* Acceso a internet (para conexión con Supabase)
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+### Extensiones de PHP requeridas
 
-## Setup
+Es necesario habilitar las siguientes extensiones en el archivo `php.ini`:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+* `extension=pgsql`
+* `extension=pdo_pgsql`
+* `extension=mbstring`
+* `extension=intl`
 
-## Important Change with index.php
+Luego de activarlas, reiniciar el servidor Apache.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+---
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+## 4. Instalación del Sistema
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### Paso 1: Clonar el repositorio
 
-## Repository Management
+Abrir una terminal y ejecutar:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+```bash
+git clone <URL_DEL_REPOSITORIO>
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+Luego ingresar a la carpeta del proyecto:
 
-## Server Requirements
+```bash
+cd nombre-del-proyecto
+```
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+---
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+### Paso 2: Configurar variables de entorno
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+Copiar el archivo `.env` provisto en el Drive del proyecto dentro de la raíz del sistema.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+Este archivo contiene la configuración de conexión a la base de datos (Supabase).
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
-=======
+Verificar que tenga datos similares a:
+
+```env
+database.default.hostname = aws-1-sa-east-1.pooler.supabase.com
+database.default.database = postgres
+database.default.username = TU_USUARIO
+database.default.password = TU_PASSWORD
+database.default.DBDriver = Postgre
+database.default.port = 5432
+```
+
+---
+
+### Paso 3: Configuración de CodeIgniter
+
+Verificar en el archivo:
+
+```
+app/Config/App.php
+```
+
+Que la URL base sea:
+
+```php
+public string $baseURL = 'http://localhost:8080/';
+```
+
+---
+
+### Paso 4: Ejecutar el servidor
+
+Desde la raíz del proyecto ejecutar:
+
+```bash
+php spark serve
+```
+
+El sistema quedará disponible en:
+
+```
+http://localhost:8080
+```
+
+---
+
+## 5. Uso del Sistema
+
+### Registro de usuario
+
+* Acceder a `/auth/registro`
+* Completar los datos requeridos
+* El sistema registra automáticamente como **Alumno**
+
+### Inicio de sesión
+
+* Acceder a `/auth/login`
+* Ingresar email y contraseña
+
+### Roles
+
+* Los roles se gestionan directamente desde la base de datos:
+
+  * `1 = Admin`
+  * `2 = Alumno`
+
+---
+
+## 6. Consideraciones
+
+* La base de datos se encuentra alojada en Supabase (PostgreSQL).
+* La asignación de carrera a un alumno se realiza manualmente desde la base de datos.
+* El sistema utiliza arquitectura MVC (Modelo-Vista-Controlador).
+* No requiere instalación de base de datos local.
+
+---
+
+## 7. Solución de Problemas
+
+### Error de conexión a base de datos
+
+* Verificar que el archivo `.env` esté correctamente configurado
+* Confirmar que las extensiones `pgsql` y `pdo_pgsql` estén habilitadas
+
+### Pantalla en blanco o error general
+
+* Revisar logs en:
+
+```
+writable/logs/
+```
+
+### Error de encoding (utf8mb4)
+
+* Asegurarse de usar PostgreSQL (no MySQL)
+* Configurar correctamente el driver en `.env`
+
+---
+
+## 8. Estado del Sistema
+
+El sistema se encuentra en una versión inicial que incluye:
+
+* Registro de usuarios
+* Inicio de sesión
+* Consulta de materias disponibles
