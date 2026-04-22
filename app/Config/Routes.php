@@ -39,3 +39,25 @@ $routes->get('materias/obtenerMateriasDisponibles/(:num)',
  
 $routes->get('materias/obtenerMateriasDisponibles/(:num)/(:num)',
              'Materias::obtenerMateriasDisponibles/$1/$2');
+
+// -------------------------------------------------------
+// RUTAS DEL PANEL ADMIN
+// -------------------------------------------------------
+
+// Lista de materias
+$routes->get('admin/materias', 'AdminController::listarMaterias');
+
+// Mostrar formulario de creación
+$routes->get('admin/materias/crear', 'AdminController::crearMateria');
+
+// Procesar formulario de creación
+$routes->post('admin/materias/guardar', 'AdminController::guardarMateria');
+
+// Mostrar formulario de edición
+$routes->get('admin/materias/editar/(:num)', 'AdminController::editarMateria/$1');
+
+// Procesar formulario de edición
+$routes->post('admin/materias/actualizar/(:num)', 'AdminController::actualizarMateria/$1');
+
+// Eliminar una materia
+$routes->get('admin/materias/eliminar/(:num)', 'AdminController::eliminarMateria/$1');

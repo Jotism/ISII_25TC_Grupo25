@@ -22,11 +22,19 @@
     <?php endif; ?>
 
     <h1>Bienvenido</h1>
-    <p>Estás en tu panel de alumno. Podés consultar las materias disponibles.</p>
 
-    <a href="<?= base_url('materias/obtenerMateriasDisponibles') ?>" class="btn-materias">
-        Ver materias disponibles
-    </a>
+    <?php if (session()->get('id_perfil') == 1) : ?>
+        <p>Estás en tu panel de admin.</p>
+        <a href="<?= base_url('admin/materias') ?>" class="btn-materias" style="background:#6c3483">
+            ⚙ Panel Admin
+        </a>
+
+    <?php elseif(session()->get('id_perfil') == 2) : ?>
+        <p>Estás en tu panel de alumno. Podés consultar las materias disponibles.</p>
+        <a href="<?= base_url('materias/obtenerMateriasDisponibles') ?>" class="btn-materias">
+            Ver materias disponibles
+        </a>
+    <?php endif; ?>
 
 </div>
 
