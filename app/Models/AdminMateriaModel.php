@@ -16,8 +16,6 @@ class AdminMateriaModel extends Model
         'id_cuatrimestre',
     ];
 
-    // ----------------------------------------------------------
-    // getMaterias()
     // Retorna todas las materias con el nombre de su carrera.
     public function getMaterias(): array
     {
@@ -31,11 +29,8 @@ class AdminMateriaModel extends Model
             ->getResultArray();
     }
 
-    // ----------------------------------------------------------
-    // getMateriaConCarrera($id)
     // Retorna UNA materia con su id_carrera actual.
-    // Se usa para pre-cargar el formulario de edición.
-    // ----------------------------------------------------------
+
     public function getMateriaConCarrera(int $id): array
     {
         $resultado = $this->db->table('materias m')

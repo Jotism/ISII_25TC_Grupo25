@@ -25,11 +25,8 @@ class UsuarioModel extends Model
         'id_perfil',
     ];
 
-    // -------------------------------------------------------
     // VALIDARCREDENCIALES
-    // Busca en la tabla usuarios con el email y contraseña dados.
-    // Retorna el registro del usuario si existe, o false si no.
-    // -------------------------------------------------------
+
     public function validarCredenciales(string $email, string $contrasena)
     {
         $usuario = $this->db->table('usuarios')
@@ -41,11 +38,9 @@ class UsuarioModel extends Model
         return $usuario ?: false; // Si es null → false
     }
 
-    // -------------------------------------------------------
+
     // INSERTARUSUARIO
-    // Inserta un nuevo usuario en la tabla usuarios.
-    // Recibe un array con: nombre, apellido, dni, email, pass, id_perfil
-    // -------------------------------------------------------
+
     public function insertarUsuario(array $datos): bool
     {
         return $this->db->table('usuarios')->insert($datos);

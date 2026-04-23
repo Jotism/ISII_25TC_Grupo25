@@ -10,10 +10,8 @@ class CarreraModel extends Model
     protected $primaryKey = 'id_carrera';
     protected $returnType = 'array';
 
-    // ----------------------------------------------------------
-    // getCarreras()
     // Retorna todas las carreras ordenadas por nombre.
-    // ----------------------------------------------------------
+
     public function getCarreras(): array
     {
         return $this->db->table('carrera')

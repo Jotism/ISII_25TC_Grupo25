@@ -4,10 +4,9 @@ namespace App\Controllers;
 
 class Dashboard extends BaseController
 {
-    // -------------------------------------------------------
+
     // INDEX: Método principal del dashboard
-    // Ruta: /dashboard
-    // -------------------------------------------------------
+
     public function index()
     {
         // Verificar sesión activa

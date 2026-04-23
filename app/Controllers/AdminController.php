@@ -8,11 +8,9 @@ use App\Models\CarreraModel;
 
 class AdminController extends BaseController
 {
-    // ----------------------------------------------------------
+
     // MÉTODO PRIVADO: verificarAdmin()
-    // Se llama al inicio de CADA método del controlador.
-    // Si el usuario no es admin (id_perfil != 1) → redirige.
-    // ----------------------------------------------------------
+
     private function verificarAdmin()
     {
         // Si no hay sesión activa → al login
@@ -28,11 +26,8 @@ class AdminController extends BaseController
         return null; // Todo OK, puede continuar
     }
 
-    // ----------------------------------------------------------
     // listarMaterias()
-    // Ruta GET: /admin/materias
-    // Obtiene todas las materias (con su carrera) y las muestra.
-    // ----------------------------------------------------------
+
     public function listarMaterias()
     {
         $redireccion = $this->verificarAdmin();
@@ -46,12 +41,8 @@ class AdminController extends BaseController
         ]);
     }
 
-    // ----------------------------------------------------------
     // crearMateria()
-    // Ruta GET: /admin/materias/crear
-    // Solo muestra el formulario vacío para crear una materia.
-    // Carga el listado de carreras para el dropdown.
-    // ----------------------------------------------------------
+
     public function crearMateria()
     {
         $redireccion = $this->verificarAdmin();
@@ -65,12 +56,9 @@ class AdminController extends BaseController
         ]);
     }
 
-    // ----------------------------------------------------------
-    // guardarMateria()
-    // Ruta POST: /admin/materias/guardar
     // Recibe los datos del formulario de creación.
     // Inserta en tabla "materias" y luego en "materia_carrera".
-    // ----------------------------------------------------------
+
     public function guardarMateria()
     {
         $redireccion = $this->verificarAdmin();
@@ -98,11 +86,9 @@ class AdminController extends BaseController
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia creada correctamente.');
     }
 
-    // ----------------------------------------------------------
-    // editarMateria($id)
-    // Ruta GET: /admin/materias/editar/{id}
+
     // Muestra el formulario pre-cargado con los datos actuales.
-    // ----------------------------------------------------------
+
     public function editarMateria($id)
     {
         $redireccion = $this->verificarAdmin();
@@ -120,11 +106,8 @@ class AdminController extends BaseController
         ]);
     }
 
-    // ----------------------------------------------------------
-    // actualizarMateria($id)
-    // Ruta POST: /admin/materias/actualizar/{id}
     // Recibe los datos del formulario de edición y actualiza BD.
-    // ----------------------------------------------------------
+
     public function actualizarMateria($id)
     {
         $redireccion = $this->verificarAdmin();
@@ -151,12 +134,8 @@ class AdminController extends BaseController
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia actualizada correctamente.');
     }
 
-    // ----------------------------------------------------------
-    // eliminarMateria($id)
-    // Ruta GET: /admin/materias/eliminar/{id}
     // Elimina la materia de las tablas materias y materia_carrera.
-    // Es un DELETE real (no lógico).
-    // ----------------------------------------------------------
+
     public function eliminarMateria($id)
     {
         $redireccion = $this->verificarAdmin();

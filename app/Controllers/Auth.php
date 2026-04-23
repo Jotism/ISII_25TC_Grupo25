@@ -6,17 +6,14 @@ use App\Models\UsuarioModel;
 
 class Auth extends BaseController
 {
-    // -------------------------------------------------------
     // LOGIN: Muestra el formulario de inicio de sesión
-    // -------------------------------------------------------
     public function login()
     {
         return view('login');
     }
 
-    // -------------------------------------------------------
     // INICIARSESION: Procesa el formulario de login
-    // -------------------------------------------------------
+
     public function iniciarSesion()
     {
         // Obtener datos del formulario
@@ -48,17 +45,17 @@ class Auth extends BaseController
         return redirect()->to('/dashboard')->with('mensaje', 'Acceso autorizado');
     }
 
-    // -------------------------------------------------------
+
     // REGISTRO: Muestra el formulario de registro
-    // -------------------------------------------------------
+
     public function registro()
     {
         return view('registro');
     }
 
-    // -------------------------------------------------------
+
     // GUARDARREGISTRO: Procesa el formulario de registro (POST)
-    // -------------------------------------------------------
+
     public function guardarRegistro()
     {
         // Obtener datos del formulario
@@ -81,9 +78,9 @@ class Auth extends BaseController
         return redirect()->to('/login')->with('mensaje', 'Registro exitoso. Podés iniciar sesión.');
     }
 
-    // -------------------------------------------------------
+
     // CERRAR SESIÓN
-    // -------------------------------------------------------
+
     public function logout()
     {
         session()->destroy();
