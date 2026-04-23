@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel Admin — Materias</title>
-    <!--
-        VISTA: panel_admin.php
-        Ubicación: app/Views/admin/panel_admin.php
-        Muestra la tabla de materias con acciones Editar y Eliminar.
-        Recibe: $materias (array con nombre_carrera incluido)
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body>

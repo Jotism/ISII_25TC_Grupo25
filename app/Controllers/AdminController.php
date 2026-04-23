@@ -1,23 +1,5 @@
 <?php
 
-/**
- * CONTROLADOR: AdminController.php
- * ============================================================
- * Ubicación: app/Controllers/AdminController.php
- *
- * Responsabilidad:
- *   - Verificar que el usuario sea ADMIN (id_perfil = 1)
- *   - Manejar el CRUD completo de materias
- *
- * Métodos:
- *   - listarMaterias()      → muestra panel_admin.php
- *   - crearMateria()        → muestra formulario crear_materia.php
- *   - guardarMateria()      → procesa POST y guarda en BD
- *   - editarMateria($id)    → muestra formulario editar_materia.php
- *   - actualizarMateria($id)→ procesa POST y actualiza en BD
- *   - eliminarMateria($id)  → elimina de BD y redirige
- * ============================================================
- */
 
 namespace App\Controllers;
 

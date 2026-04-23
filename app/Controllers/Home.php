@@ -8,7 +8,7 @@ class Home extends BaseController
 {
     try {
         $db = \Config\Database::connect();
-        return "Conectado 😎";
+        return "Conectado a la base de datos";
     } catch (\Exception $e) {
         return $e->getMessage();
     }

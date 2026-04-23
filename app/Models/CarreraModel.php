@@ -1,15 +1,5 @@
 <?php
 
-/**
- * MODELO: CarreraModel.php
- * ============================================================
- * UbicaciÃ³n: app/Models/CarreraModel.php
- *
- * Responsabilidad: consultas a la tabla "carrera".
- * Solo necesitamos traer todas las carreras para el dropdown.
- * ============================================================
- */
-
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -23,7 +13,6 @@ class CarreraModel extends Model
     // ----------------------------------------------------------
     // getCarreras()
     // Retorna todas las carreras ordenadas por nombre.
-    // Se usa para poblar el <select> en los formularios.
     // ----------------------------------------------------------
     public function getCarreras(): array
     {

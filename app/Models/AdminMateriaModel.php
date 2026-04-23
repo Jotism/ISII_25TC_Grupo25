@@ -1,25 +1,5 @@
 <?php
 
-/**
- * MODELO: AdminMateriaModel.php
- * ============================================================
- * Ubicación: app/Models/AdminMateriaModel.php
- *
- * Responsabilidad: todas las consultas SQL del CRUD de materias.
- * El controlador NO escribe SQL directo; siempre pasa por aquí.
- *
- * Métodos:
- *   - getMaterias()               → lista con nombre de carrera
- *   - getMateriaConCarrera($id)   → una materia con su carrera
- *   - insertarMateria($datos)     → INSERT en tabla materias
- *   - insertarMateriaCarrera()    → INSERT en materia_carrera
- *   - actualizarMateria()         → UPDATE en materias
- *   - actualizarMateriaCarrera()  → DELETE + INSERT en materia_carrera
- *   - eliminarMateria($id)        → DELETE en materias
- *   - eliminarMateriaCarrera($id) → DELETE en materia_carrera
- * ============================================================
- */
-
 namespace App\Models;
 
 use CodeIgniter\Model;
@@ -39,15 +19,6 @@ class AdminMateriaModel extends Model
     // ----------------------------------------------------------
     // getMaterias()
     // Retorna todas las materias con el nombre de su carrera.
-    // Hace JOIN entre materias → materia_carrera → carrera.
-    //
-    // SQL equivalente:
-    //   SELECT m.*, c.nombre AS nombre_carrera
-    //   FROM materias m
-    //   LEFT JOIN materia_carrera mc ON mc.id_materia = m.id_materia
-    //   LEFT JOIN carrera c          ON c.id_carrera  = mc.id_carrera
-    //   ORDER BY m.anio_cursada, m.id_cuatrimestre
-    // ----------------------------------------------------------
     public function getMaterias(): array
     {
         return $this->db->table('materias m')
@@ -113,8 +84,6 @@ class AdminMateriaModel extends Model
 
     // ----------------------------------------------------------
     // actualizarMateriaCarrera($id_materia, $id_carrera)
-    // Estrategia simple: borra la relación vieja e inserta la nueva.
-    // Así no hay que preocuparse por UPDATE en tabla de relación.
     // ----------------------------------------------------------
     public function actualizarMateriaCarrera(int $id_materia, int $id_carrera): void
     {

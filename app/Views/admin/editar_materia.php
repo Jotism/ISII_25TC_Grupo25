@@ -3,14 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Editar Materia</title>
-    <!--
-        VISTA: editar_materia.php
-        Ubicación: app/Views/admin/editar_materia.php
-        Formulario pre-cargado con los datos actuales de la materia.
-        Recibe:
-          - $materia  (array) → datos actuales de la materia
-          - $carreras (array) → todas las carreras para el dropdown
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body>

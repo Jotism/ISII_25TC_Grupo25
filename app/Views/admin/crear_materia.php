@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Crear Materia</title>
-    <!--
-        VISTA: crear_materia.php
-        Ubicación: app/Views/admin/crear_materia.php
-        Formulario para crear una nueva materia.
-        Recibe: $carreras (array) → para el dropdown de carrera
-    -->
     <link rel="stylesheet" href="<?= base_url('css/styles.css') ?>">
 </head>
 <body>
