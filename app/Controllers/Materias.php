@@ -1,25 +1,31 @@
 <?php
 
-
 namespace App\Controllers;
 
 use App\Models\MateriaModel;
 
 class Materias extends BaseController
 {
-    public function obtenerMateriasDisponibles()
+
+    // consultarMateriasDisponibles($id_usuario, $id_carrera)
+    // Ruta: GET /materias/{id_usuario}/{id_carrera}
+    // Recibe ambos ids por parámetro de URL.
+    // Delega en el modelo el filtrado por carrera y exclusión
+    // de materias ya inscriptas.
+
+    public function consultarMateriasDisponibles(int $id_usuario, int $id_carrera)
     {
-        // Verificar sesión activa
         if (!session()->get('logueado')) {
             return redirect()->to('/login');
         }
 
-        $idEstudiante = session()->get('id_usuario');
-
-
         $modelo   = new MateriaModel();
-        $materias = $modelo->obtenerMateriasDisponibles($idEstudiante);
+        $materias = $modelo->consultarMateriasDisponibles($id_usuario, $id_carrera);
 
-        return view('materias', ['materias' => $materias]);
+        return view('inscripciones/materias', [
+            'materias'   => $materias,
+            'id_usuario' => $id_usuario,
+            'id_carrera' => $id_carrera,
+        ]);
     }
 }

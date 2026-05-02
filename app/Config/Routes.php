@@ -61,3 +61,23 @@ $routes->post('admin/materias/actualizar/(:num)', 'AdminController::actualizarMa
 
 // Eliminar una materia
 $routes->get('admin/materias/eliminar/(:num)', 'AdminController::eliminarMateria/$1');
+
+
+// También accesible desde InscripcionesController
+$routes->get('inscripciones/materias/(:num)/(:num)', 'InscripcionesController::inscribirseAMateria/$1/$2');
+
+// -------------------------------------------------------
+// CARRERAS
+// -------------------------------------------------------
+$routes->get('mis-carreras',                    'InscripcionesController::misCarreras');
+$routes->post('inscribirse-carrera',            'InscripcionesController::inscribirseACarrera');
+$routes->get('baja-carrera/(:num)',             'InscripcionesController::darseDeBajaCarrera/$1');
+ 
+// -------------------------------------------------------
+// MATERIAS (alumno)
+// -------------------------------------------------------
+$routes->get('mis-materias',                    'InscripcionesController::misMaterias');
+$routes->post('inscribirse-materia',            'InscripcionesController::inscribirseAMateria');
+$routes->get('baja-materia/(:num)',             'InscripcionesController::darseDeBajaMateria/$1');
+
+

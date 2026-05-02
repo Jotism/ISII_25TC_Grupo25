@@ -330,3 +330,24 @@ select {
     font-size: 1rem;
     background: #fff;
 }
+
+/* -------------------------------------------------------
+   11. COMPROBANTE DE INSCRIPCIÓN
+------------------------------------------------------- */
+.comprobante {
+    background: #f0f9f4;
+    border: 1px solid #a8d5b8;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.comprobante h3 {
+    color: #27ae60;
+    margin-bottom: 0.5rem;
+}
+
+.comprobante p {
+    margin: 0.2rem 0;
+    color: #333;
+}

@@ -8,7 +8,7 @@
 <body>
 
 <header>
-    <strong>Sistema Académico</strong>
+    <strong>GestAcad</strong>
     <span>
         Hola, <?= esc(session()->get('nombre')) ?> &nbsp;|&nbsp;
         <a href="<?= base_url('auth/logout') ?>">Cerrar sesión</a>
@@ -24,16 +24,26 @@
     <h1>Bienvenido</h1>
 
     <?php if (session()->get('id_perfil') == 1) : ?>
+
         <p>Estás en tu panel de admin.</p>
         <a href="<?= base_url('admin/materias') ?>" class="btn-materias" style="background:#6c3483">
             ⚙ Panel Admin
         </a>
 
-    <?php elseif(session()->get('id_perfil') == 2) : ?>
-        <p>Estás en tu panel de alumno. Podés consultar las materias disponibles.</p>
-        <a href="<?= base_url('materias/obtenerMateriasDisponibles') ?>" class="btn-materias">
-            Ver materias disponibles
+    <?php elseif (session()->get('id_perfil') == 2) : ?>
+
+        <p>¿Qué querés gestionar hoy?</p>
+
+        <!-- Botón 1: Mis Carreras -->
+        <a href="<?= base_url('mis-carreras') ?>" class="btn-materias" style="background:#2980b9; display:block; margin-bottom:1rem">
+            🎓 Mis Carreras
         </a>
+
+        <!-- Botón 2: Mis Materias -->
+        <a href="<?= base_url('mis-materias') ?>" class="btn-materias" style="display:block">
+            📚 Mis Materias
+        </a>
+
     <?php endif; ?>
 
 </div>
