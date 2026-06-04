@@ -81,3 +81,10 @@ $routes->post('inscribirse-materia',            'InscripcionesController::inscri
 $routes->get('baja-materia/(:num)',             'InscripcionesController::darseDeBajaMateria/$1');
 
 
+/**
+ * RUTAS DOCENTE
+ */
+ 
+$routes->get('docente/materias',               'DocenteController::misMaterias');
+$routes->get('docente/alumnos/(:num)',          'DocenteController::verAlumnos/$1');
+$routes->post('docente/registrar-nota',        'DocenteController::registrarNota');

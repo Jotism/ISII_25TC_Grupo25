@@ -24,7 +24,7 @@
 
     <?php if (session()->getFlashdata('nombre_materia')) : ?>
         <div class="comprobante">
-            <h3>✅ Inscripción exitosa</h3>
+            <h3>Inscripción exitosa</h3>
             <p><strong>Materia:</strong> <?= esc(session()->getFlashdata('nombre_materia')) ?></p>
             <p><strong>Fecha:</strong> <?= date('d/m/Y') ?></p>
             <p><strong>Carrera:</strong> <?= esc($miCarrera['nombre']) ?></p>
