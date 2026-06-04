@@ -33,15 +33,18 @@
     <?php elseif (session()->get('id_perfil') == 2) : ?>
 
         <p>¿Qué querés gestionar hoy?</p>
-
-        <!-- Botón 1: Mis Carreras -->
         <a href="<?= base_url('mis-carreras') ?>" class="btn-materias" style="background:#2980b9; display:block; margin-bottom:1rem">
             🎓 Mis Carreras
         </a>
-
-        <!-- Botón 2: Mis Materias -->
         <a href="<?= base_url('mis-materias') ?>" class="btn-materias" style="display:block">
             📚 Mis Materias
+        </a>
+
+    <?php elseif (session()->get('id_perfil') == 3) : ?>
+
+        <p>Estás en tu panel de docente.</p>
+        <a href="<?= base_url('docente/materias') ?>" class="btn-materias" style="background:#1a7a4a; display:block">
+            📝 Cargar Notas
         </a>
 
     <?php endif; ?>
