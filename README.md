@@ -1,4 +1,4 @@
-# Anexo B – Manual de Instalación y Configuración del Sistema
+# Manual de Instalación y Configuración del Sistema
 
 ## 1. Introducción
 
