@@ -12,10 +12,10 @@ class MateriaModel extends Model
 
     protected $allowedFields = ['nombre', 'anio_cursada', 'id_cuatrimestre'];
 
-
+    // ----------------------------------------------------------
     // consultarMateriasDisponibles($id_usuario, $id_carrera)
     // Materias de la carrera que el alumno AÚN NO tiene.
-
+    // ----------------------------------------------------------
     public function consultarMateriasDisponibles(int $id_usuario, int $id_carrera): array
     {
         $subquery = $this->db->table('inscripcion_materia')
@@ -34,24 +34,26 @@ class MateriaModel extends Model
             ->getResultArray();
     }
 
-
+    // ----------------------------------------------------------
     // obtenerMateriasInscripto($id_usuario)
     // Materias en las que YA está inscripto el alumno.
-
+    // ----------------------------------------------------------
     public function obtenerMateriasInscripto(int $id_usuario): array
     {
+        
         return $this->db->table('inscripcion_materia im')
-            ->join('materias m', 'm.id_materia = im.id_materia', 'inner')
-            ->select('m.id_materia, m.nombre, m.id_cuatrimestre')
+            ->join('materias m',      'm.id_materia = im.id_materia',           'inner')
+            ->join('nota_cursada nc', 'nc.id_inscripcion = im.id_inscripcion',  'left')
+            ->select('m.id_materia, m.nombre, m.id_cuatrimestre, nc.nota, nc.estado, nc.fecha_nota')
             ->where('im.id_usuario', $id_usuario)
             ->orderBy('m.id_cuatrimestre', 'ASC')
             ->get()
             ->getResultArray();
     }
 
-
+    // ----------------------------------------------------------
     // generarInscripcion($id_usuario, $id_materia)
-
+    // ----------------------------------------------------------
     public function generarInscripcion(int $id_usuario, int $id_materia): bool
     {
         $existe = $this->db->table('inscripcion_materia')
@@ -69,9 +71,9 @@ class MateriaModel extends Model
         return true;
     }
 
-
+    // ----------------------------------------------------------
     // eliminarInscripcionMateria($id_usuario, $id_materia)
-
+    // ----------------------------------------------------------
     public function eliminarInscripcionMateria(int $id_usuario, int $id_materia): void
     {
         $this->db->table('inscripcion_materia')
@@ -80,9 +82,9 @@ class MateriaModel extends Model
             ->delete();
     }
 
-
+    // ----------------------------------------------------------
     // obtenerNombreMateria($id_materia)
-
+    // ----------------------------------------------------------
     public function obtenerNombreMateria(int $id_materia): string
     {
         $resultado = $this->db->table('materias')

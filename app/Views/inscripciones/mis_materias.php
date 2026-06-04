@@ -21,6 +21,7 @@
     <?php if (session()->getFlashdata('error')) : ?>
         <div class="mensaje-error"><?= esc(session()->getFlashdata('error')) ?></div>
     <?php endif; ?>
+
     <?php if (session()->getFlashdata('nombre_materia')) : ?>
         <div class="comprobante">
             <h3>✅ Inscripción exitosa</h3>
@@ -47,6 +48,8 @@
                 <tr>
                     <th>Materia</th>
                     <th>Cuatrimestre</th>
+                    <th>Nota</th>
+                    <th>Estado</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -55,6 +58,18 @@
                 <tr>
                     <td><?= esc($m['nombre']) ?></td>
                     <td><span class="badge"><?= esc($m['id_cuatrimestre']) ?>° cuat.</span></td>
+                    <td>
+                        <?= $m['nota'] !== null ? esc($m['nota']) : '<span style="color:#aaa">—</span>' ?>
+                    </td>
+                    <td>
+                        <?php if ($m['estado'] === 'Aprobado') : ?>
+                            <span class="badge" style="background:#e8f5e9; color:#27ae60">Aprobado</span>
+                        <?php elseif ($m['estado'] === 'Desaprobado') : ?>
+                            <span class="badge" style="background:#fde8e8; color:#c0392b">Desaprobado</span>
+                        <?php else : ?>
+                            <span style="color:#aaa">Sin calificar</span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <a href="<?= base_url('baja-materia/' . $m['id_materia']) ?>"
                            class="btn-accion btn-accion--rojo"
