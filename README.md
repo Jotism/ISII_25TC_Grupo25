@@ -13,7 +13,6 @@ Brindar una guía clara para que cualquier usuario con conocimientos básicos pu
 ### Software necesario
 
 * PHP 8.x
-* Servidor local (por ejemplo: XAMPP o similar)
 * Git (para clonar el repositorio)
 * Navegador web (Chrome, Edge, etc.)
 * Acceso a internet (para conexión con Supabase)
@@ -152,11 +151,3 @@ writable/logs/
 * Configurar correctamente el driver en `.env`
 
 ---
-
-## 8. Estado del Sistema
-
-El sistema se encuentra en una versión inicial que incluye:
-
-* Registro de usuarios
-* Inicio de sesión
-* Consulta de materias disponibles
