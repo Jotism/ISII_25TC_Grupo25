@@ -5,8 +5,6 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-
 // Ruta raíz → redirige al login
 $routes->get('/', 'Auth::login');
  

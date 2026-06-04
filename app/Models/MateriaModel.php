@@ -76,6 +76,22 @@ class MateriaModel extends Model
     // ----------------------------------------------------------
     public function eliminarInscripcionMateria(int $id_usuario, int $id_materia): void
     {
+        // Obtener el id_inscripcion de la materia
+        $inscripcion = $this->db->table('inscripcion_materia')
+            ->select('id_inscripcion')
+            ->where('id_usuario', $id_usuario)
+            ->where('id_materia', $id_materia)
+            ->get()
+            ->getRowArray();
+
+        if ($inscripcion) {
+            // Borrar la nota primero para no violar la FK
+            $this->db->table('nota_cursada')
+                ->where('id_inscripcion', $inscripcion['id_inscripcion'])
+                ->delete();
+        }
+
+        // Borrar la inscripción a la materia
         $this->db->table('inscripcion_materia')
             ->where('id_usuario', $id_usuario)
             ->where('id_materia', $id_materia)
