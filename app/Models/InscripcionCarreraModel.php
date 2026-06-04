@@ -25,9 +25,9 @@ class InscripcionCarreraModel extends Model
     }
 
 
-    // inscribirseACarrera($id_usuario, $id_carrera)
+    // generarInscripcion($id_usuario, $id_carrera)
 
-    public function inscribirseACarrera(int $id_usuario, int $id_carrera): bool
+    public function generarInscripcion(int $id_usuario, int $id_carrera): bool
     {
         $existe = $this->db->table('inscripcion_carrera')
             ->where('id_usuario', $id_usuario)

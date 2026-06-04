@@ -64,7 +64,7 @@ class InscripcionesController extends BaseController
         $id_carrera = (int) $this->request->getPost('id_carrera');
 
         $modelo    = model(InscripcionCarreraModel::class);
-        $resultado = $modelo->inscribirseACarrera($id_usuario, $id_carrera);
+        $resultado = $modelo->generarInscripcion($id_usuario, $id_carrera);
 
         if (!$resultado) {
             return redirect()->to('/mis-carreras')
