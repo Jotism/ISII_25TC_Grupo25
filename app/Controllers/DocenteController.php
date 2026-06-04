@@ -35,7 +35,7 @@ class DocenteController extends BaseController
 
         $id_docente = session()->get('id_usuario');
 
-        $modelo   = new MateriaModel();
+        $modelo   = model(MateriaModel::class);
         $materias = $modelo->obtenerMateriasPorDocente($id_docente);
 
         return view('docente/mis_materias', [
@@ -54,8 +54,8 @@ class DocenteController extends BaseController
 
         $id_docente = session()->get('id_usuario');
 
-        $modeloNota   = new NotaModel();
-        $modeloMateria = new MateriaModel();
+        $modeloNota   = model(NotaModel::class);
+        $modeloMateria = model(MateriaModel::class);
 
         $alumnos = $modeloNota->obtenerAlumnosInscriptos($id_materia);
         $materia = $modeloMateria->find($id_materia);
@@ -87,7 +87,7 @@ class DocenteController extends BaseController
                 ->with('error', 'La nota debe ser un valor entre 1 y 10.');
         }
 
-        $modelo    = new NotaModel();
+        $modelo    = model(NotaModel::class);
         $resultado = $modelo->registrarNota($id_docente, $id_materia, $id_alumno, $nota);
 
         if (!$resultado) {

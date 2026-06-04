@@ -35,8 +35,8 @@ class InscripcionesController extends BaseController
         // id_usuario SIEMPRE desde sesión
         $id_usuario = session()->get('id_usuario');
 
-        $modeloInscripcion = new InscripcionCarreraModel();
-        $modeloCarrera     = new CarreraModel();
+        $modeloInscripcion = model(InscripcionCarreraModel::class);
+        $modeloCarrera     = model(CarreraModel::class);
 
         // Carrera actual del alumno (una sola)
         $carreras   = $modeloInscripcion->consultarCarrerasInscripto($id_usuario);
@@ -63,7 +63,7 @@ class InscripcionesController extends BaseController
         $id_usuario = session()->get('id_usuario'); // desde sesión
         $id_carrera = (int) $this->request->getPost('id_carrera');
 
-        $modelo    = new InscripcionCarreraModel();
+        $modelo    = model(InscripcionCarreraModel::class);
         $resultado = $modelo->inscribirseACarrera($id_usuario, $id_carrera);
 
         if (!$resultado) {
@@ -88,7 +88,7 @@ class InscripcionesController extends BaseController
 
         $id_usuario = session()->get('id_usuario');
 
-        $modelo = new InscripcionCarreraModel();
+        $modelo = model(InscripcionCarreraModel::class);
         $modelo->darseDeBaja($id_usuario, $id_carrera);
 
         return redirect()->to('/mis-carreras')
@@ -110,7 +110,7 @@ class InscripcionesController extends BaseController
         $id_usuario = session()->get('id_usuario');
 
         // Obtener la carrera del alumno primero
-        $modeloInscripcion = new InscripcionCarreraModel();
+        $modeloInscripcion = model(InscripcionCarreraModel::class);
         $carreras          = $modeloInscripcion->consultarCarrerasInscripto($id_usuario);
         $miCarrera         = $carreras[0] ?? null;
 
@@ -122,7 +122,7 @@ class InscripcionesController extends BaseController
 
         $id_carrera = $miCarrera['id_carrera'];
 
-        $modeloMateria      = new MateriaModel();
+        $modeloMateria      = model(MateriaModel::class);
         $materiasDisponibles = $modeloMateria->consultarMateriasDisponibles($id_usuario, $id_carrera);
         $materiasInscripto  = $modeloMateria->obtenerMateriasInscripto($id_usuario);
 
@@ -145,15 +145,33 @@ class InscripcionesController extends BaseController
         $id_usuario = session()->get('id_usuario');
         $id_materia = (int) $this->request->getPost('id_materia');
 
-        $modelo    = new MateriaModel();
-        $resultado = $modelo->generarInscripcion($id_usuario, $id_materia);
+        // Obtener la carrera del alumno primero
+        $modeloInscripcion = model(InscripcionCarreraModel::class);
+        $carreras          = $modeloInscripcion->consultarCarrerasInscripto($id_usuario);
+        $miCarrera         = $carreras[0] ?? null;
+
+        if (!$miCarrera) {
+            return redirect()->to('/mis-materias')
+                ->with('error', 'Primero tenés que inscribirte a una carrera.');
+        }
+
+        // Verificar si la materia pertenece a la carrera del alumno
+        $modeloMateria = model(MateriaModel::class);
+        $pertenece = $modeloMateria->perteneceACarrera($id_materia, $miCarrera['id_carrera']);
+
+        if (!$pertenece) {
+            return redirect()->to('/mis-materias')
+                ->with('error', 'La materia no pertenece a tu carrera.');
+        }
+
+        $resultado = $modeloMateria->generarInscripcion($id_usuario, $id_materia);
 
         if (!$resultado) {
             return redirect()->to('/mis-materias')
                 ->with('error', 'Ya estás inscripto en esa materia.');
         }
 
-        $nombreMateria = $modelo->obtenerNombreMateria($id_materia);
+        $nombreMateria = $modeloMateria->obtenerNombreMateria($id_materia);
 
         return redirect()->to('/mis-materias')
             ->with('nombre_materia', $nombreMateria);
@@ -170,7 +188,7 @@ class InscripcionesController extends BaseController
 
         $id_usuario = session()->get('id_usuario');
 
-        $modelo = new MateriaModel();
+        $modelo = model(MateriaModel::class);
         $modelo->eliminarInscripcionMateria($id_usuario, $id_materia);
 
         return redirect()->to('/mis-materias')

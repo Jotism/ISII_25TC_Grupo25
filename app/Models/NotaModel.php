@@ -48,13 +48,29 @@ class NotaModel extends Model
         // Calcular estado según la nota
         $estado = ($nota >= 6) ? 'Aprobado' : 'Desaprobado';
 
-        // Insertar la nota
-        $this->db->table('nota_cursada')->insert([
-            'id_inscripcion' => $inscripcion['id_inscripcion'],
-            'nota'           => $nota,
-            'estado'         => $estado,
-            'fecha_nota'     => date('Y-m-d'),
-        ]);
+        // Verificar si ya existe una nota registrada para esta inscripción
+        $existeNota = $this->db->table('nota_cursada')
+            ->where('id_inscripcion', $inscripcion['id_inscripcion'])
+            ->countAllResults();
+
+        if ($existeNota > 0) {
+            // Actualizar la nota existente
+            $this->db->table('nota_cursada')
+                ->where('id_inscripcion', $inscripcion['id_inscripcion'])
+                ->update([
+                    'nota'       => $nota,
+                    'estado'     => $estado,
+                    'fecha_nota' => date('Y-m-d'),
+                ]);
+        } else {
+            // Insertar una nueva nota
+            $this->db->table('nota_cursada')->insert([
+                'id_inscripcion' => $inscripcion['id_inscripcion'],
+                'nota'           => $nota,
+                'estado'         => $estado,
+                'fecha_nota'     => date('Y-m-d'),
+            ]);
+        }
 
         return true;
     }

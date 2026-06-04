@@ -123,4 +123,15 @@ class MateriaModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    // ----------------------------------------------------------
+    // perteneceACarrera($id_materia, $id_carrera)
+    // ----------------------------------------------------------
+    public function perteneceACarrera(int $id_materia, int $id_carrera): bool
+    {
+        return $this->db->table('materia_carrera')
+            ->where('id_carrera', $id_carrera)
+            ->where('id_materia', $id_materia)
+            ->countAllResults() > 0;
+    }
 }
