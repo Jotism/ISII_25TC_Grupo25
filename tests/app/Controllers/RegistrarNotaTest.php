@@ -22,14 +22,15 @@ class RegistrarNotaTest extends CIUnitTestCase
     }
 
     /**
-     * Caso Feliz: Profesor titular carga una nota válida (rango 1 a 10) a un alumno inscripto.
+     * Caso Correcto: Profesor titular carga una nota válida (rango 1 a 10) a un alumno inscripto.
+     * 
+     * @dataProvider proveedorNotasValidas
      */
-    public function testRegistrarNotaExitosa()
+    public function testRegistrarNotaExitosa($notaValida)
     {
         $idDocente = 6;
         $idMateria = 6;
         $idAlumno = 9;
-        $notaValida = 8;
         $nombreAlumno = 'Valentina López';
 
         // 1. Mock de NotaModel para registrar la nota de forma exitosa
@@ -62,13 +63,14 @@ class RegistrarNotaTest extends CIUnitTestCase
 
     /**
      * Excepción 1: Nota fuera de rango (ej. un 11 o un 0).
+     * 
+     * @dataProvider proveedorNotasInvalidas
      */
-    public function testNotaFueraDeRango()
+    public function testNotaFueraDeRango($notaInvalida)
     {
         $idDocente = 6;
         $idMateria = 6;
         $idAlumno = 9;
-        $notaInvalida = 11; // fuera de rango
 
         // No debería interactuar con el modelo ya que el controlador debe validar previamente
         $mockNota = $this->createMock(NotaModel::class);
@@ -98,10 +100,11 @@ class RegistrarNotaTest extends CIUnitTestCase
 
     /**
      * Excepción 2: Usuario que intenta cargar la nota no es el profesor titular asignado a la cátedra.
+     * 
+     * @dataProvider proveedorDocentesNoTitulares
      */
-    public function testNoEsProfesorTitular()
+    public function testNoEsProfesorTitular($idDocenteNoTitular)
     {
-        $idDocenteNoTitular = 100; // docente que no es titular de la materia
         $idMateria = 6;
         $idAlumno = 9;
         $nota = 8;
@@ -136,12 +139,13 @@ class RegistrarNotaTest extends CIUnitTestCase
 
     /**
      * Excepción 3: El alumno no posee una inscripción activa en esa materia.
+     * 
+     * @dataProvider proveedorAlumnosNoInscriptos
      */
-    public function testAlumnoNoInscripto()
+    public function testAlumnoNoInscripto($idAlumnoInvalido)
     {
         $idDocente = 6;
         $idMateria = 6;
-        $idAlumnoInvalido = 999; // alumno no inscrito
         $nota = 8;
 
         // Mock de NotaModel: registrarNota devuelve false (simulando rechazo porque no hay inscripción activa)
@@ -170,5 +174,44 @@ class RegistrarNotaTest extends CIUnitTestCase
         // Aserciones: Redirección y error de registro
         $response->assertRedirectTo("/docente/alumnos/{$idMateria}");
         $response->assertSessionHas('error', 'No se pudo registrar la nota. Verificá los datos.');
+    }
+
+    /**
+     * Proveedores de datos para las pruebas
+     */
+
+    public static function proveedorNotasValidas(): array
+    {
+        return [
+            'Nota mínima permitida (1)' => [1],
+            'Nota intermedia (6)'       => [6],
+            'Nota máxima permitida (10)' => [10],
+        ];
+    }
+
+    public static function proveedorNotasInvalidas(): array
+    {
+        return [
+            'Nota justo arriba del límite (11)' => [11],
+            'Nota en cero (0)'                  => [0],
+            'Nota negativa (-5)'                => [-5],
+            'Nota extremadamente alta (99)'     => [99],
+        ];
+    }
+
+    public static function proveedorDocentesNoTitulares(): array
+    {
+        return [
+            'Docente ID 100' => [100],
+            'Docente ID 999' => [999],
+        ];
+    }
+
+    public static function proveedorAlumnosNoInscriptos(): array
+    {
+        return [
+            'Alumno ID 999' => [999],
+            'Alumno ID -1'  => [-1],
+        ];
     }
 }
