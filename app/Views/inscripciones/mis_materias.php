@@ -71,7 +71,7 @@
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="<?= base_url('baja-materia/' . $m['id_materia']) ?>"
+                        <a href="<?= base_url('baja-materia/' . $m['id_materia'] . '/' . session()->get('id_usuario')) ?>"
                            class="btn-accion btn-accion--rojo"
                            onclick="return confirm('¿Seguro que querés darte de baja de <?= esc($m['nombre']) ?>?')">
                             Darme de baja

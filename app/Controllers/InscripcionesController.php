@@ -98,7 +98,7 @@ class InscripcionesController extends BaseController
     // SECCIÓN: MATERIAS
 
     // misMaterias()
-    // Ruta: GET /mis-materias
+    // Ruta: GET /mis-materias/{id_usuario}
     // Muestra materias disponibles de la carrera del alumno
     // y las materias en las que ya está inscripto.
 
@@ -106,8 +106,6 @@ class InscripcionesController extends BaseController
     {
         $redireccion = $this->verificarSesion();
         if ($redireccion) return $redireccion;
-
-        //$id_usuario = session()->get('id_usuario');
 
         // Obtener la carrera del alumno primero
         $modeloInscripcion = model(InscripcionCarreraModel::class);
@@ -178,12 +176,12 @@ class InscripcionesController extends BaseController
     // darseDeBajaMateria()
     // Ruta: GET /baja-materia/{id_materia}
 
-    public function darseDeBajaMateria(int $id_materia)
+    public function darseDeBajaMateria(int $id_materia, int $id_usuario)
     {
         $redireccion = $this->verificarSesion();
         if ($redireccion) return $redireccion;
 
-        $id_usuario = session()->get('id_usuario');
+        //$id_usuario = session()->get('id_usuario');
 
         $modelo = model(MateriaModel::class);
         $modelo->eliminarInscripcionMateria($id_usuario, $id_materia);

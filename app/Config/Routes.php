@@ -73,7 +73,7 @@ $routes->get('baja-carrera/(:num)',             'InscripcionesController::darseD
 // -------------------------------------------------------
 $routes->get('mis-materias/(:num)',                 'InscripcionesController::misMaterias/$1');
 $routes->get('inscribirse-materia/(:num)/(:num)',   'InscripcionesController::inscribirseAMateria/$1/$2');
-$routes->get('baja-materia/(:num)',                 'InscripcionesController::darseDeBajaMateria/$1');
+$routes->get('baja-materia/(:num)/(:num)',          'InscripcionesController::darseDeBajaMateria/$1/$2');
 
 
 /**
