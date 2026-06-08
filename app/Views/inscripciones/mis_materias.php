@@ -105,7 +105,7 @@
                     <td><?= esc($m['nombre']) ?></td>
                     <td><span class="badge"><?= esc($m['id_cuatrimestre']) ?>° cuat.</span></td>
                     <td>
-                        <form action="<?= base_url('inscribirse-materia') ?>" method="post">
+                        <form action="<?= base_url('inscribirse-materia/' . $m['id_materia'] . '/' . session()->get('id_usuario')) ?>"
                             <?= csrf_field() ?>
                             <input type="hidden" name="id_materia" value="<?= esc($m['id_materia']) ?>">
                             <button type="submit" class="btn-accion btn-accion--verde">

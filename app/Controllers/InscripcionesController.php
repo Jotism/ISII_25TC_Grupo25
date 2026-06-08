@@ -135,15 +135,12 @@ class InscripcionesController extends BaseController
 
 
     // inscribirseAMateria()
-    // Ruta: POST /inscribirse-materia
+    // Ruta: GET /inscribirse-materia/{id_materia}/{id_usuario}
 
-    public function inscribirseAMateria()
+    public function inscribirseAMateria(int $id_materia, int $id_usuario)
     {
         $redireccion = $this->verificarSesion();
         if ($redireccion) return $redireccion;
-
-        $id_usuario = session()->get('id_usuario');
-        $id_materia = (int) $this->request->getPost('id_materia');
 
         // Obtener la carrera del alumno primero
         $modeloInscripcion = model(InscripcionCarreraModel::class);
