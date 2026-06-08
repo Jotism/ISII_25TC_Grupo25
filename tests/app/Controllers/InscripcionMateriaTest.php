@@ -6,6 +6,7 @@ use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Config\Factories;
 use App\Models\InscripcionCarreraModel;
+use App\Models\InscripcionMateriaModel;
 use App\Models\MateriaModel;
 
 /**
@@ -23,7 +24,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
     }
 
     /**
-     * Caso Correcto: Envío de POST válido. Registrar la inscripción exitosa.
+     * Caso Correcto: Envío de GET válido. Registrar la inscripción exitosa.
      * 
      * @dataProvider proveedorInscripcionesExitosas
      */
@@ -46,11 +47,6 @@ class InscripcionMateriaTest extends CIUnitTestCase
             ->with($idMateria, 1)
             ->willReturn(true);
             
-        // Simular inscripción exitosa
-        $mockMateria->method('generarInscripcion')
-            ->with($idUsuario, $idMateria)
-            ->willReturn(true);
-            
         // Simular obtener el nombre de la materia para el comprobante
         $mockMateria->method('obtenerNombreMateria')
             ->with($idMateria)
@@ -58,19 +54,25 @@ class InscripcionMateriaTest extends CIUnitTestCase
 
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
-        // 3. Realizar petición POST simulando sesión del alumno activa
+        // 3. Mock de InscripcionMateriaModel
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->method('generarInscripcion')
+            ->with($idUsuario, $idMateria)
+            ->willReturn(true);
+
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        // 4. Realizar petición GET simulando sesión del alumno activa
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
         ];
 
         $response = $this->withSession($sessionData)
-            ->post('inscribirse-materia', [
-                'id_materia' => $idMateria
-            ]);
+            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 4. Aserciones: Redirección correcta y flashdata cargado
-        $response->assertRedirectTo('/mis-materias');
+        // 5. Aserciones: Redirección correcta y flashdata cargado
+        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('nombre_materia', $materiaNombre);
     }
 
@@ -97,27 +99,28 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $mockMateria->method('perteneceACarrera')
             ->with($idMateria, 1)
             ->willReturn(true);
-            
-        // Simular que ya está inscripto (generarInscripcion retorna false)
-        $mockMateria->method('generarInscripcion')
-            ->with($idUsuario, $idMateria)
-            ->willReturn(false);
 
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
-        // 3. Realizar petición POST
+        // 3. Mock de InscripcionMateriaModel
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->method('generarInscripcion')
+            ->with($idUsuario, $idMateria)
+            ->willReturn(false);
+
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        // 4. Realizar petición GET
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
         ];
 
         $response = $this->withSession($sessionData)
-            ->post('inscribirse-materia', [
-                'id_materia' => $idMateria
-            ]);
+            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 4. Aserciones: Redirección con mensaje de error adecuado en flashdata
-        $response->assertRedirectTo('/mis-materias');
+        // 5. Aserciones: Redirección con mensaje de error adecuado en flashdata
+        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('error', 'Ya estás inscripto en esa materia.');
     }
 
@@ -147,19 +150,21 @@ class InscripcionMateriaTest extends CIUnitTestCase
 
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
-        // 3. Realizar petición POST
+        // 3. Mock de InscripcionMateriaModel para evitar conexión real
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        // 4. Realizar petición GET
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
         ];
 
         $response = $this->withSession($sessionData)
-            ->post('inscribirse-materia', [
-                'id_materia' => $idMateria
-            ]);
+            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 4. Aserciones: Redirección con error de pertenencia en flashdata
-        $response->assertRedirectTo('/mis-materias');
+        // 5. Aserciones: Redirección con error de pertenencia en flashdata
+        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('error', 'La materia no pertenece a tu carrera.');
     }
 
