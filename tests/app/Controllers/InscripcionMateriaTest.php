@@ -66,6 +66,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
+            'id_perfil'  => 2, // Alumno
         ];
 
         $response = $this->withSession($sessionData)
@@ -114,6 +115,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
+            'id_perfil'  => 2, // Alumno
         ];
 
         $response = $this->withSession($sessionData)
@@ -158,6 +160,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
+            'id_perfil'  => 2, // Alumno
         ];
 
         $response = $this->withSession($sessionData)

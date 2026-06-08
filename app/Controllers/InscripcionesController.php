@@ -13,11 +13,22 @@ class InscripcionesController extends BaseController
     // PRIVADO: verificarSesion()
     // Siempre toma el id_usuario de la sesión, nunca de la URL.
     // ----------------------------------------------------------
-    private function verificarSesion()
+    private function verificarSesion(int $id_usuario = null)
     {
         if (!session()->get('logueado')) {
             return redirect()->to('/login');
         }
+
+        // Solo permite el acceso a Alumnos (perfil ID = 2)
+        if (session()->get('id_perfil') != 2) {
+            return redirect()->to('/dashboard');
+        }
+
+        // Seguridad: Evitar que un alumno acceda a los datos de otro (IDOR)
+        if ($id_usuario !== null && $id_usuario !== (int) session()->get('id_usuario')) {
+            return redirect()->to('/dashboard');
+        }
+
         return null;
     }
 
@@ -105,7 +116,7 @@ class InscripcionesController extends BaseController
 
     public function misMaterias(int $id_usuario)
     {
-        $redireccion = $this->verificarSesion();
+        $redireccion = $this->verificarSesion($id_usuario);
         if ($redireccion) return $redireccion;
 
         // Obtener la carrera del alumno primero
@@ -139,7 +150,7 @@ class InscripcionesController extends BaseController
 
     public function inscribirseAMateria(int $id_materia, int $id_usuario)
     {
-        $redireccion = $this->verificarSesion();
+        $redireccion = $this->verificarSesion($id_usuario);
         if ($redireccion) return $redireccion;
 
         // Obtener la carrera del alumno primero
@@ -181,7 +192,7 @@ class InscripcionesController extends BaseController
 
     public function darseDeBajaMateria(int $id_materia, int $id_usuario)
     {
-        $redireccion = $this->verificarSesion();
+        $redireccion = $this->verificarSesion($id_usuario);
         if ($redireccion) return $redireccion;
 
         $modeloInscripcionMateria   = model(InscripcionMateriaModel::class);

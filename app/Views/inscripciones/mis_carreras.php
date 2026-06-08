@@ -52,7 +52,7 @@
 
         <p style="margin-top:1rem; color:#666; font-size:0.9rem">
             Para inscribirte a materias andá a
-            <a href="<?= base_url('mis-materias') ?>">Mis Materias</a>.
+            <a href="<?= base_url('mis-materias/' . session()->get('id_usuario')) ?>">Mis Materias</a>.
         </p>
 
     <?php else : ?>
