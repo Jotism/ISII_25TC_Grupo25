@@ -36,7 +36,7 @@
         <a href="<?= base_url('mis-carreras') ?>" class="btn-materias" style="background:#2980b9; display:block; margin-bottom:1rem">
              Mis Carreras
         </a>
-        <a href="<?= base_url('mis-materias') ?>" class="btn-materias" style="display:block">
+        <a href="<?= base_url('mis-materias/' . session()->get('id_usuario')) ?>" class="btn-materias" style="display:block">
              Mis Materias
         </a>
 

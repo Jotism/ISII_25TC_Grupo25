@@ -102,12 +102,12 @@ class InscripcionesController extends BaseController
     // Muestra materias disponibles de la carrera del alumno
     // y las materias en las que ya está inscripto.
 
-    public function misMaterias()
+    public function misMaterias(int $id_usuario)
     {
         $redireccion = $this->verificarSesion();
         if ($redireccion) return $redireccion;
 
-        $id_usuario = session()->get('id_usuario');
+        //$id_usuario = session()->get('id_usuario');
 
         // Obtener la carrera del alumno primero
         $modeloInscripcion = model(InscripcionCarreraModel::class);
@@ -148,7 +148,7 @@ class InscripcionesController extends BaseController
         $miCarrera         = $carreras[0] ?? null;
 
         if (!$miCarrera) {
-            return redirect()->to('/mis-materias')
+            return redirect()->to('/mis-materias/' . $id_usuario)
                 ->with('error', 'Primero tenés que inscribirte a una carrera.');
         }
 
@@ -157,20 +157,20 @@ class InscripcionesController extends BaseController
         $pertenece = $modeloMateria->perteneceACarrera($id_materia, $miCarrera['id_carrera']);
 
         if (!$pertenece) {
-            return redirect()->to('/mis-materias')
+            return redirect()->to('/mis-materias/' . $id_usuario)
                 ->with('error', 'La materia no pertenece a tu carrera.');
         }
 
         $resultado = $modeloMateria->generarInscripcion($id_usuario, $id_materia);
 
         if (!$resultado) {
-            return redirect()->to('/mis-materias')
+            return redirect()->to('/mis-materias/' . $id_usuario)
                 ->with('error', 'Ya estás inscripto en esa materia.');
         }
 
         $nombreMateria = $modeloMateria->obtenerNombreMateria($id_materia);
 
-        return redirect()->to('/mis-materias')
+        return redirect()->to('/mis-materias/' . $id_usuario)
             ->with('nombre_materia', $nombreMateria);
     }
 
@@ -188,7 +188,7 @@ class InscripcionesController extends BaseController
         $modelo = model(MateriaModel::class);
         $modelo->eliminarInscripcionMateria($id_usuario, $id_materia);
 
-        return redirect()->to('/mis-materias')
+        return redirect()->to('/mis-materias/' . $id_usuario)
             ->with('mensaje', 'Te diste de baja de la materia.');
     }
 }

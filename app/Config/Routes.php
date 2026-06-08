@@ -71,7 +71,7 @@ $routes->get('baja-carrera/(:num)',             'InscripcionesController::darseD
 // -------------------------------------------------------
 // MATERIAS (alumno)
 // -------------------------------------------------------
-$routes->get('mis-materias',                        'InscripcionesController::misMaterias');
+$routes->get('mis-materias/(:num)',                 'InscripcionesController::misMaterias/$1');
 $routes->get('inscribirse-materia/(:num)/(:num)',   'InscripcionesController::inscribirseAMateria/$1/$2');
 $routes->get('baja-materia/(:num)',                 'InscripcionesController::darseDeBajaMateria/$1');
 
@@ -81,5 +81,5 @@ $routes->get('baja-materia/(:num)',                 'InscripcionesController::da
  */
  
 $routes->get('docente/materias',               'DocenteController::misMaterias');
-$routes->get('docente/alumnos/(:num)',          'DocenteController::verAlumnos/$1');
+$routes->get('docente/alumnos/(:num)',         'DocenteController::verAlumnos/$1');
 $routes->post('docente/registrar-nota',        'DocenteController::registrarNota');
