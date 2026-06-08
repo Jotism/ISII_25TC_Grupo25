@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\InscripcionCarreraModel;
+use App\Models\InscripcionMateriaModel;
 use App\Models\MateriaModel;
 use App\Models\CarreraModel;
 
@@ -108,8 +109,8 @@ class InscripcionesController extends BaseController
         if ($redireccion) return $redireccion;
 
         // Obtener la carrera del alumno primero
-        $modeloInscripcion = model(InscripcionCarreraModel::class);
-        $carreras          = $modeloInscripcion->consultarCarrerasInscripto($id_usuario);
+        $modeloInscripcionCarrera = model(InscripcionCarreraModel::class);
+        $carreras          = $modeloInscripcionCarrera->consultarCarrerasInscripto($id_usuario);
         $miCarrera         = $carreras[0] ?? null;
 
         if (!$miCarrera) {
@@ -120,9 +121,10 @@ class InscripcionesController extends BaseController
 
         $id_carrera = $miCarrera['id_carrera'];
 
-        $modeloMateria      = model(MateriaModel::class);
+        $modeloMateria                  = model(MateriaModel::class);
+        $modeloInscripcionMateria       = model(InscripcionMateriaModel::class);
         $materiasDisponibles = $modeloMateria->consultarMateriasDisponibles($id_usuario, $id_carrera);
-        $materiasInscripto  = $modeloMateria->obtenerMateriasInscripto($id_usuario);
+        $materiasInscripto  = $modeloInscripcionMateria->obtenerMateriasInscripto($id_usuario);
 
         return view('inscripciones/mis_materias', [
             'materiasDisponibles' => $materiasDisponibles,
@@ -141,8 +143,8 @@ class InscripcionesController extends BaseController
         if ($redireccion) return $redireccion;
 
         // Obtener la carrera del alumno primero
-        $modeloInscripcion = model(InscripcionCarreraModel::class);
-        $carreras          = $modeloInscripcion->consultarCarrerasInscripto($id_usuario);
+        $modeloInscripcionCarrera = model(InscripcionCarreraModel::class);
+        $carreras          = $modeloInscripcionCarrera->consultarCarrerasInscripto($id_usuario);
         $miCarrera         = $carreras[0] ?? null;
 
         if (!$miCarrera) {
@@ -151,7 +153,8 @@ class InscripcionesController extends BaseController
         }
 
         // Verificar si la materia pertenece a la carrera del alumno
-        $modeloMateria = model(MateriaModel::class);
+        $modeloMateria              = model(MateriaModel::class);
+        $modeloInscripcionMateria   = model(InscripcionMateriaModel::class);
         $pertenece = $modeloMateria->perteneceACarrera($id_materia, $miCarrera['id_carrera']);
 
         if (!$pertenece) {
@@ -159,7 +162,7 @@ class InscripcionesController extends BaseController
                 ->with('error', 'La materia no pertenece a tu carrera.');
         }
 
-        $resultado = $modeloMateria->generarInscripcion($id_usuario, $id_materia);
+        $resultado = $modeloInscripcionMateria->generarInscripcion($id_usuario, $id_materia);
 
         if (!$resultado) {
             return redirect()->to('/mis-materias/' . $id_usuario)
@@ -181,10 +184,8 @@ class InscripcionesController extends BaseController
         $redireccion = $this->verificarSesion();
         if ($redireccion) return $redireccion;
 
-        //$id_usuario = session()->get('id_usuario');
-
-        $modelo = model(MateriaModel::class);
-        $modelo->eliminarInscripcionMateria($id_usuario, $id_materia);
+        $modeloInscripcionMateria   = model(InscripcionMateriaModel::class);
+        $modeloInscripcionMateria->eliminarInscripcionMateria($id_usuario, $id_materia);
 
         return redirect()->to('/mis-materias/' . $id_usuario)
             ->with('mensaje', 'Te diste de baja de la materia.');
