@@ -40,9 +40,11 @@ class InscripcionMateriaModel extends Model
 
         if ($existe > 0) return false;
 
-        $this->db->table('inscripcion_materia')->insert([
-            'id_usuario' => $id_usuario,
-            'id_materia' => $id_materia,
+        $sql = "CALL sp_insertar_inscripcion_materia(?, ?)";
+
+        $this->db->query($sql, [
+            $id_usuario,
+            $id_materia
         ]);
 
         return true;
