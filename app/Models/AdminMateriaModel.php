@@ -31,12 +31,12 @@ class AdminMateriaModel extends Model
 
     // Retorna UNA materia con su id_carrera actual.
 
-    public function getMateriaConCarrera(int $id): array
+    public function getMateriaConCarrera(int $id_materia): array
     {
         $resultado = $this->db->table('materias m')
             ->join('materia_carrera mc', 'mc.id_materia = m.id_materia', 'left')
             ->select('m.id_materia, m.nombre, m.anio_cursada, m.id_cuatrimestre, mc.id_carrera')
-            ->where('m.id_materia', $id)
+            ->where('m.id_materia', $id_materia)
             ->get()
             ->getRowArray();
 
@@ -70,10 +70,10 @@ class AdminMateriaModel extends Model
     // actualizarMateria($id, $datos)
     // Actualiza nombre, anio_cursada e id_cuatrimestre.
     // ----------------------------------------------------------
-    public function actualizarMateria(int $id, array $datos): void
+    public function actualizarMateria(int $id_materia, array $datos): void
     {
         $this->db->table('materias')
-            ->where('id_materia', $id)
+            ->where('id_materia', $id_materia)
             ->update($datos);
     }
 

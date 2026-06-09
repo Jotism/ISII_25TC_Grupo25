@@ -49,25 +49,12 @@ class MateriaModel extends Model
         return $resultado['nombre'] ?? 'Materia desconocida';
     }
 
-    // Mantenido por compatibilidad con el admin
-    public function obtenerMateriasDisponibles(int $idEstudiante): array
-    {
-        return $this->db->table('inscripcion_carrera ic')
-            ->join('materia_carrera mc', 'mc.id_carrera = ic.id_carrera', 'inner')
-            ->join('materias m', 'm.id_materia = mc.id_materia', 'inner')
-            ->where('ic.id_usuario', $idEstudiante)
-            ->select('m.id_materia, m.nombre, m.anio_cursada, m.id_cuatrimestre')
-            ->orderBy('m.anio_cursada', 'ASC')
-            ->get()
-            ->getResultArray();
-    }
-
     // ----------------------------------------------------------
     // obtenerMateriasPorDocente($id_docente)
     // Trae las materias de las que el docente es titular.
     // Corresponde al diagrama: obtenerMateriasPorDocente(id_docente)
     // ----------------------------------------------------------
-    public function obtenerMateriasPorDocente(int $id_docente): array
+    public function obtenerMateriasPorDocente(int $id_usuario): array
     {
         return $this->db->table("materias")
             ->select("id_materia, nombre, anio_cursada, id_cuatrimestre")
