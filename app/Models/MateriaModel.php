@@ -58,7 +58,7 @@ class MateriaModel extends Model
     {
         return $this->db->table("materias")
             ->select("id_materia, nombre, anio_cursada, id_cuatrimestre")
-            ->where("id_usuario", $id_docente)
+            ->where("id_usuario", $id_usuario)
             ->orderBy("anio_cursada", "ASC")
             ->get()
             ->getResultArray();
