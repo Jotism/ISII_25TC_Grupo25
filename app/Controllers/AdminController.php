@@ -1,16 +1,14 @@
 <?php
 
-
 namespace App\Controllers;
 
-use App\Models\AdminMateriaModel;
+use App\Models\MateriaModel;
+use App\Models\MateriaCarreraModel;
 use App\Models\CarreraModel;
 
 class AdminController extends BaseController
 {
-
     // MÉTODO PRIVADO: verificarAdmin()
-
     private function verificarAdmin()
     {
         // Si no hay sesión activa → al login
@@ -27,14 +25,46 @@ class AdminController extends BaseController
     }
 
     // listarMaterias()
-
     public function listarMaterias()
     {
         $redireccion = $this->verificarAdmin();
         if ($redireccion) return $redireccion;
 
-        $modelo   = new AdminMateriaModel();
-        $materias = $modelo->getMaterias();  // trae materias con nombre de carrera
+        $materiaModel        = new MateriaModel();
+        $materiaCarreraModel = new MateriaCarreraModel();
+        $carreraModel        = new CarreraModel();
+
+        $materiasRaw = $materiaModel->findAll();
+        $relaciones  = $materiaCarreraModel->obtenerRelaciones();
+        $carreras    = $carreraModel->getCarreras();
+
+        // Indexar carreras por su id para búsquedas rápidas
+        $carrerasIndexed = [];
+        foreach ($carreras as $c) {
+            $carrerasIndexed[$c['id_carrera']] = $c['nombre'];
+        }
+
+        // Indexar relaciones de materia_carrera por id_materia
+        $relacionesIndexed = [];
+        foreach ($relaciones as $r) {
+            $relacionesIndexed[$r['id_materia']] = $r['id_carrera'];
+        }
+
+        // Construir arreglo combinado en PHP
+        $materias = [];
+        foreach ($materiasRaw as $m) {
+            $id_materia = (int) $m['id_materia'];
+            $id_carrera = $relacionesIndexed[$id_materia] ?? null;
+            $nombre_carrera = ($id_carrera !== null) ? ($carrerasIndexed[$id_carrera] ?? null) : null;
+
+            $materias[] = [
+                'id_materia'     => $id_materia,
+                'nombre'         => $m['nombre'],
+                'anio_cursada'   => $m['anio_cursada'],
+                'id_cuatrimestre' => $m['id_cuatrimestre'],
+                'nombre_carrera' => $nombre_carrera,
+            ];
+        }
 
         return view('admin/panel_admin', [
             'materias' => $materias,
@@ -42,7 +72,6 @@ class AdminController extends BaseController
     }
 
     // crearMateria()
-
     public function crearMateria()
     {
         $redireccion = $this->verificarAdmin();
@@ -56,9 +85,9 @@ class AdminController extends BaseController
         ]);
     }
 
+    // guardarMateria()
     // Recibe los datos del formulario de creación.
     // Inserta en tabla "materias" y luego en "materia_carrera".
-
     public function guardarMateria()
     {
         $redireccion = $this->verificarAdmin();
@@ -68,37 +97,54 @@ class AdminController extends BaseController
         $nombre          = $this->request->getPost('nombre');
         $anio_cursada    = $this->request->getPost('anio_cursada');
         $id_cuatrimestre = $this->request->getPost('id_cuatrimestre');
-        $id_carrera      = $this->request->getPost('id_carrera');
+        $id_carrera      = (int) $this->request->getPost('id_carrera');
 
-        $modelo = new AdminMateriaModel();
+        $materiaModel        = new MateriaModel();
+        $materiaCarreraModel = new MateriaCarreraModel();
 
-        // Paso 1: insertar en tabla "materias" y obtener el id generado
-        $id_materia = $modelo->insertarMateria([
+        // Paso 1: insertar en tabla "materias"
+        $materiaModel->insert([
             'nombre'          => $nombre,
             'anio_cursada'    => $anio_cursada,
             'id_cuatrimestre' => $id_cuatrimestre,
         ]);
+        $id_materia = $materiaModel->insertID();
 
         // Paso 2: insertar en tabla "materia_carrera" para asociar carrera
-        $modelo->insertarMateriaCarrera($id_materia, $id_carrera);
+        $materiaCarreraModel->asociarMateriaCarrera($id_materia, $id_carrera);
 
         // Volver al panel con mensaje de éxito
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia creada correctamente.');
     }
 
-
+    // editarMateria($id)
     // Muestra el formulario pre-cargado con los datos actuales.
-
     public function editarMateria($id)
     {
         $redireccion = $this->verificarAdmin();
         if ($redireccion) return $redireccion;
 
-        $modelo        = new AdminMateriaModel();
-        $modeloCarrera = new CarreraModel();
+        $materiaModel        = new MateriaModel();
+        $materiaCarreraModel = new MateriaCarreraModel();
+        $carreraModel        = new CarreraModel();
 
-        $materia  = $modelo->getMateriaConCarrera($id); // datos de la materia
-        $carreras = $modeloCarrera->getCarreras();       // todas las carreras para el select
+        $materiaRaw = $materiaModel->find($id);
+        if (!$materiaRaw) {
+            return redirect()->to('/admin/materias')->with('error', 'Materia no encontrada.');
+        }
+
+        $carrerasRel = $materiaCarreraModel->obtenerCarrerasPorMateria($id);
+        $id_carrera = !empty($carrerasRel) ? $carrerasRel[0]['id_carrera'] : null;
+
+        $materia = [
+            'id_materia'      => $materiaRaw['id_materia'],
+            'nombre'          => $materiaRaw['nombre'],
+            'anio_cursada'    => $materiaRaw['anio_cursada'],
+            'id_cuatrimestre' => $materiaRaw['id_cuatrimestre'],
+            'id_carrera'      => $id_carrera,
+        ];
+
+        $carreras = $carreraModel->getCarreras();       // todas las carreras para el select
 
         return view('admin/editar_materia', [
             'materia'  => $materia,
@@ -106,8 +152,8 @@ class AdminController extends BaseController
         ]);
     }
 
+    // actualizarMateria($id)
     // Recibe los datos del formulario de edición y actualiza BD.
-
     public function actualizarMateria($id)
     {
         $redireccion = $this->verificarAdmin();
@@ -116,12 +162,13 @@ class AdminController extends BaseController
         $nombre          = $this->request->getPost('nombre');
         $anio_cursada    = $this->request->getPost('anio_cursada');
         $id_cuatrimestre = $this->request->getPost('id_cuatrimestre');
-        $id_carrera      = $this->request->getPost('id_carrera');
+        $id_carrera      = (int) $this->request->getPost('id_carrera');
 
-        $modelo = new AdminMateriaModel();
+        $materiaModel        = new MateriaModel();
+        $materiaCarreraModel = new MateriaCarreraModel();
 
         // Paso 1: actualizar datos de la materia
-        $modelo->actualizarMateria($id, [
+        $materiaModel->update($id, [
             'nombre'          => $nombre,
             'anio_cursada'    => $anio_cursada,
             'id_cuatrimestre' => $id_cuatrimestre,
@@ -129,25 +176,27 @@ class AdminController extends BaseController
 
         // Paso 2: actualizar la carrera asociada
         // (borra la relación anterior y crea la nueva)
-        $modelo->actualizarMateriaCarrera($id, $id_carrera);
+        $materiaCarreraModel->eliminarPorMateria($id);
+        $materiaCarreraModel->asociarMateriaCarrera($id, $id_carrera);
 
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia actualizada correctamente.');
     }
 
+    // eliminarMateria($id)
     // Elimina la materia de las tablas materias y materia_carrera.
-
     public function eliminarMateria($id)
     {
         $redireccion = $this->verificarAdmin();
         if ($redireccion) return $redireccion;
 
-        $modelo = new AdminMateriaModel();
+        $materiaModel        = new MateriaModel();
+        $materiaCarreraModel = new MateriaCarreraModel();
 
-        // Paso 1: borrar relación en materia_carrera primero (integridad)
-        $modelo->eliminarMateriaCarrera($id);
+        // Paso 1: borrar relación en materia_carrera primero
+        $materiaCarreraModel->eliminarPorMateria($id);
 
         // Paso 2: borrar la materia
-        $modelo->eliminarMateria($id);
+        $materiaModel->delete($id);
 
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia eliminada.');
     }

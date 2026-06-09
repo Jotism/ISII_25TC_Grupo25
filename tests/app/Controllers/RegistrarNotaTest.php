@@ -5,6 +5,8 @@ namespace Tests\app\Controllers;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Config\Factories;
+use App\Models\MateriaModel;
+use App\Models\InscripcionMateriaModel;
 use App\Models\NotaModel;
 
 /**
@@ -32,13 +34,27 @@ class RegistrarNotaTest extends CIUnitTestCase
         $idMateria = 6;
         $idAlumno = 9;
         $nombreAlumno = 'Valentina López';
+        $idInscripcion = 15;
 
-        // 1. Mock de NotaModel para registrar la nota de forma exitosa
+        // Mock de MateriaModel para validar titularidad
+        $mockMateria = $this->createMock(MateriaModel::class);
+        $mockMateria->method('find')
+            ->with($idMateria)
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente]);
+        Factories::injectMock('models', MateriaModel::class, $mockMateria);
+
+        // Mock de InscripcionMateriaModel para obtener la inscripción
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->method('buscarInscripcion')
+            ->with($idAlumno, $idMateria)
+            ->willReturn(['id_inscripcion' => $idInscripcion]);
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        // Mock de NotaModel para registrar la nota de forma exitosa
         $mockNota = $this->createMock(NotaModel::class);
-        $mockNota->method('registrarNota')
-            ->with($idDocente, $idMateria, $idAlumno, $notaValida)
+        $mockNota->method('registrarNotaDirecta')
+            ->with($idInscripcion, $notaValida)
             ->willReturn(true);
-
         Factories::injectMock('models', NotaModel::class, $mockNota);
 
         // 2. Ejecutar petición POST simulando sesión de docente activa
@@ -74,8 +90,7 @@ class RegistrarNotaTest extends CIUnitTestCase
 
         // No debería interactuar con el modelo ya que el controlador debe validar previamente
         $mockNota = $this->createMock(NotaModel::class);
-        $mockNota->expects($this->never())->method('registrarNota');
-
+        $mockNota->expects($this->never())->method('registrarNotaDirecta');
         Factories::injectMock('models', NotaModel::class, $mockNota);
 
         // Petición POST
@@ -109,12 +124,20 @@ class RegistrarNotaTest extends CIUnitTestCase
         $idAlumno = 9;
         $nota = 8;
 
-        // Mock de NotaModel: registrarNota devuelve false (simulando rechazo por titularidad)
-        $mockNota = $this->createMock(NotaModel::class);
-        $mockNota->method('registrarNota')
-            ->with($idDocenteNoTitular, $idMateria, $idAlumno, $nota)
-            ->willReturn(false);
+        // Mock de MateriaModel: find devuelve una materia asignada a otro docente
+        $mockMateria = $this->createMock(MateriaModel::class);
+        $mockMateria->method('find')
+            ->with($idMateria)
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => 6]); // docente titular es el 6, no el $idDocenteNoTitular
+        Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
+        // No debería interactuar con los otros modelos
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->expects($this->never())->method('buscarInscripcion');
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        $mockNota = $this->createMock(NotaModel::class);
+        $mockNota->expects($this->never())->method('registrarNotaDirecta');
         Factories::injectMock('models', NotaModel::class, $mockNota);
 
         // Petición POST
@@ -148,12 +171,23 @@ class RegistrarNotaTest extends CIUnitTestCase
         $idMateria = 6;
         $nota = 8;
 
-        // Mock de NotaModel: registrarNota devuelve false (simulando rechazo porque no hay inscripción activa)
-        $mockNota = $this->createMock(NotaModel::class);
-        $mockNota->method('registrarNota')
-            ->with($idDocente, $idMateria, $idAlumnoInvalido, $nota)
-            ->willReturn(false);
+        // Mock de MateriaModel para validar titularidad
+        $mockMateria = $this->createMock(MateriaModel::class);
+        $mockMateria->method('find')
+            ->with($idMateria)
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente]);
+        Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
+        // Mock de InscripcionMateriaModel: buscarInscripcion devuelve null
+        $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->method('buscarInscripcion')
+            ->with($idAlumnoInvalido, $idMateria)
+            ->willReturn(null);
+        Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
+
+        // No debería registrar la nota
+        $mockNota = $this->createMock(NotaModel::class);
+        $mockNota->expects($this->never())->method('registrarNotaDirecta');
         Factories::injectMock('models', NotaModel::class, $mockNota);
 
         // Petición POST
@@ -179,12 +213,11 @@ class RegistrarNotaTest extends CIUnitTestCase
     /**
      * Proveedores de datos para las pruebas
      */
-
     public static function proveedorNotasValidas(): array
     {
         return [
-            'Nota mínima permitida (1)' => [1],
-            'Nota intermedia (6)'       => [6],
+            'Nota mínima permitida (1)'  => [1],
+            'Nota intermedia (6)'        => [6],
             'Nota máxima permitida (10)' => [10],
         ];
     }

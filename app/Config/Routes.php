@@ -24,19 +24,7 @@ $routes->get('auth/logout', 'Auth::logout');
 // -------------------------------------------------------
 $routes->get('dashboard', 'Dashboard::index');
  
-// -------------------------------------------------------
-// RUTAS DE MATERIAS
-// -------------------------------------------------------
-// Sin parámetros: usa id_usuario de la sesión
-$routes->get('materias/obtenerMateriasDisponibles',
-             'Materias::obtenerMateriasDisponibles');
- 
-// Con parámetros opcionales por URL (idEstudiante / idCarrera)
-$routes->get('materias/obtenerMateriasDisponibles/(:num)',
-             'Materias::obtenerMateriasDisponibles/$1');
- 
-$routes->get('materias/obtenerMateriasDisponibles/(:num)/(:num)',
-             'Materias::obtenerMateriasDisponibles/$1/$2');
+
 
 // -------------------------------------------------------
 // RUTAS DEL PANEL ADMIN

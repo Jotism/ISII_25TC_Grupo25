@@ -13,17 +13,27 @@ class InscripcionMateriaModel extends Model
     protected $allowedFields = ['fecha_inscripcion', 'id_usuario', 'id_materia'];
 
     // ----------------------------------------------------------
-    // obtenerMateriasInscripto($id_usuario)
-    // Materias en las que YA está inscripto el alumno.
+    // obtenerInscripcionesPorUsuario($id_usuario)
+    // Devuelve los registros de inscripción a materias del alumno.
+    // Solo consulta la tabla inscripcion_materia.
     // ----------------------------------------------------------
-    public function obtenerMateriasInscripto(int $id_usuario): array
+    public function obtenerInscripcionesPorUsuario(int $id_usuario): array
     {
-        return $this->db->table('inscripcion_materia im')
-            ->join('materias m',      'm.id_materia = im.id_materia',           'inner')
-            ->join('nota_cursada nc', 'nc.id_inscripcion = im.id_inscripcion',  'left')
-            ->select('m.id_materia, m.nombre, m.id_cuatrimestre, nc.nota, nc.estado, nc.fecha_nota')
-            ->where('im.id_usuario', $id_usuario)
-            ->orderBy('m.id_cuatrimestre', 'ASC')
+        return $this->db->table($this->table)
+            ->where('id_usuario', $id_usuario)
+            ->get()
+            ->getResultArray();
+    }
+
+    // ----------------------------------------------------------
+    // obtenerInscripcionesPorMateria($id_materia)
+    // Devuelve las inscripciones de todos los alumnos en una materia.
+    // Solo consulta la tabla inscripcion_materia.
+    // ----------------------------------------------------------
+    public function obtenerInscripcionesPorMateria(int $id_materia): array
+    {
+        return $this->db->table($this->table)
+            ->where('id_materia', $id_materia)
             ->get()
             ->getResultArray();
     }
@@ -33,7 +43,7 @@ class InscripcionMateriaModel extends Model
     // ----------------------------------------------------------
     public function generarInscripcion(int $id_usuario, int $id_materia): bool
     {
-        $existe = $this->db->table('inscripcion_materia')
+        $existe = $this->db->table($this->table)
             ->where('id_usuario', $id_usuario)
             ->where('id_materia', $id_materia)
             ->countAllResults();
@@ -51,29 +61,24 @@ class InscripcionMateriaModel extends Model
     }
 
     // ----------------------------------------------------------
-    // eliminarInscripcionMateria($id_usuario, $id_materia)
+    // eliminarInscripcionMateriaDirecta($id_usuario, $id_materia)
+    // Borra la inscripción a la materia de la tabla inscripcion_materia.
     // ----------------------------------------------------------
-    public function eliminarInscripcionMateria(int $id_usuario, int $id_materia): void
+    public function eliminarInscripcionMateriaDirecta(int $id_usuario, int $id_materia): void
     {
-        // Obtener el id_inscripcion de la materia
-        $inscripcion = $this->db->table('inscripcion_materia')
-            ->select('id_inscripcion')
+        $this->db->table($this->table)
+            ->where('id_usuario', $id_usuario)
+            ->where('id_materia', $id_materia)
+            ->delete();
+    }
+
+    // Método auxiliar para buscar inscripción por materia y alumno
+    public function buscarInscripcion(int $id_usuario, int $id_materia): ?array
+    {
+        return $this->db->table($this->table)
             ->where('id_usuario', $id_usuario)
             ->where('id_materia', $id_materia)
             ->get()
             ->getRowArray();
-
-        if ($inscripcion) {
-            // Borrar la nota primero para no violar la FK
-            $this->db->table('nota_cursada')
-                ->where('id_inscripcion', $inscripcion['id_inscripcion'])
-                ->delete();
-        }
-
-        // Borrar la inscripción a la materia
-        $this->db->table('inscripcion_materia')
-            ->where('id_usuario', $id_usuario)
-            ->where('id_materia', $id_materia)
-            ->delete();
     }
 }

@@ -8,6 +8,8 @@ use CodeIgniter\Config\Factories;
 use App\Models\InscripcionCarreraModel;
 use App\Models\InscripcionMateriaModel;
 use App\Models\MateriaModel;
+use App\Models\CarreraModel;
+use App\Models\MateriaCarreraModel;
 
 /**
  * @internal
@@ -30,39 +32,46 @@ class InscripcionMateriaTest extends CIUnitTestCase
      */
     public function testInscripcionExitosa($idUsuario, $idMateria, $materiaNombre)
     {
-        // 1. Mock de InscripcionCarreraModel para simular que el alumno pertenece a una carrera
-        $mockInscripcion = $this->createMock(InscripcionCarreraModel::class);
-        $mockInscripcion->method('consultarCarrerasInscripto')
+        // 1. Mock de InscripcionCarreraModel
+        $mockInscripcionCarrera = $this->createMock(InscripcionCarreraModel::class);
+        $mockInscripcionCarrera->method('consultarCarrerasInscripto')
             ->with($idUsuario)
             ->willReturn([
-                ['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']
+                ['id_usuario' => $idUsuario, 'id_carrera' => 1]
             ]);
-        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcion);
+        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcionCarrera);
 
-        // 2. Mock de MateriaModel
+        // 2. Mock de CarreraModel
+        $mockCarrera = $this->createMock(CarreraModel::class);
+        $mockCarrera->method('find')
+            ->with(1)
+            ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
+        Factories::injectMock('models', CarreraModel::class, $mockCarrera);
+
+        // 3. Mock de MateriaCarreraModel
+        $mockMateriaCarrera = $this->createMock(MateriaCarreraModel::class);
+        $mockMateriaCarrera->method('obtenerCarrerasPorMateria')
+            ->with($idMateria)
+            ->willReturn([
+                ['id_materia' => $idMateria, 'id_carrera' => 1]
+            ]);
+        Factories::injectMock('models', MateriaCarreraModel::class, $mockMateriaCarrera);
+
+        // 4. Mock de MateriaModel
         $mockMateria = $this->createMock(MateriaModel::class);
-        
-        // Simular que la materia pertenece a la carrera del alumno
-        $mockMateria->method('perteneceACarrera')
-            ->with($idMateria, 1)
-            ->willReturn(true);
-            
-        // Simular obtener el nombre de la materia para el comprobante
         $mockMateria->method('obtenerNombreMateria')
             ->with($idMateria)
             ->willReturn($materiaNombre);
-
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
-        // 3. Mock de InscripcionMateriaModel
+        // 5. Mock de InscripcionMateriaModel
         $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
         $mockInscripcionMateria->method('generarInscripcion')
             ->with($idUsuario, $idMateria)
             ->willReturn(true);
-
         Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
 
-        // 4. Realizar petición GET simulando sesión del alumno activa
+        // 6. Realizar petición GET simulando sesión del alumno activa
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
@@ -72,7 +81,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $response = $this->withSession($sessionData)
             ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 5. Aserciones: Redirección correcta y flashdata cargado
+        // 7. Aserciones: Redirección correcta y flashdata cargado
         $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('nombre_materia', $materiaNombre);
     }
@@ -85,33 +94,38 @@ class InscripcionMateriaTest extends CIUnitTestCase
     public function testAlumnoYaInscripto($idUsuario, $idMateria)
     {
         // 1. Mock de InscripcionCarreraModel
-        $mockInscripcion = $this->createMock(InscripcionCarreraModel::class);
-        $mockInscripcion->method('consultarCarrerasInscripto')
+        $mockInscripcionCarrera = $this->createMock(InscripcionCarreraModel::class);
+        $mockInscripcionCarrera->method('consultarCarrerasInscripto')
             ->with($idUsuario)
             ->willReturn([
-                ['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']
+                ['id_usuario' => $idUsuario, 'id_carrera' => 1]
             ]);
-        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcion);
+        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcionCarrera);
 
-        // 2. Mock de MateriaModel
-        $mockMateria = $this->createMock(MateriaModel::class);
-        
-        // Simular que la materia pertenece a la carrera
-        $mockMateria->method('perteneceACarrera')
-            ->with($idMateria, 1)
-            ->willReturn(true);
+        // 2. Mock de CarreraModel
+        $mockCarrera = $this->createMock(CarreraModel::class);
+        $mockCarrera->method('find')
+            ->with(1)
+            ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
+        Factories::injectMock('models', CarreraModel::class, $mockCarrera);
 
-        Factories::injectMock('models', MateriaModel::class, $mockMateria);
+        // 3. Mock de MateriaCarreraModel
+        $mockMateriaCarrera = $this->createMock(MateriaCarreraModel::class);
+        $mockMateriaCarrera->method('obtenerCarrerasPorMateria')
+            ->with($idMateria)
+            ->willReturn([
+                ['id_materia' => $idMateria, 'id_carrera' => 1]
+            ]);
+        Factories::injectMock('models', MateriaCarreraModel::class, $mockMateriaCarrera);
 
-        // 3. Mock de InscripcionMateriaModel
+        // 4. Mock de InscripcionMateriaModel
         $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
         $mockInscripcionMateria->method('generarInscripcion')
             ->with($idUsuario, $idMateria)
             ->willReturn(false);
-
         Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
 
-        // 4. Realizar petición GET
+        // 5. Realizar petición GET
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
@@ -121,7 +135,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $response = $this->withSession($sessionData)
             ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 5. Aserciones: Redirección con mensaje de error adecuado en flashdata
+        // 6. Aserciones: Redirección con mensaje de error adecuado en flashdata
         $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('error', 'Ya estás inscripto en esa materia.');
     }
@@ -134,29 +148,34 @@ class InscripcionMateriaTest extends CIUnitTestCase
     public function testMateriaNoPerteneceACarrera($idUsuario, $idMateria)
     {
         // 1. Mock de InscripcionCarreraModel
-        $mockInscripcion = $this->createMock(InscripcionCarreraModel::class);
-        $mockInscripcion->method('consultarCarrerasInscripto')
+        $mockInscripcionCarrera = $this->createMock(InscripcionCarreraModel::class);
+        $mockInscripcionCarrera->method('consultarCarrerasInscripto')
             ->with($idUsuario)
             ->willReturn([
-                ['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']
+                ['id_usuario' => $idUsuario, 'id_carrera' => 1]
             ]);
-        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcion);
+        Factories::injectMock('models', InscripcionCarreraModel::class, $mockInscripcionCarrera);
 
-        // 2. Mock de MateriaModel
-        $mockMateria = $this->createMock(MateriaModel::class);
-        
-        // Simular que la materia NO pertenece a la carrera (retorna false)
-        $mockMateria->method('perteneceACarrera')
-            ->with($idMateria, 1)
-            ->willReturn(false);
+        // 2. Mock de CarreraModel
+        $mockCarrera = $this->createMock(CarreraModel::class);
+        $mockCarrera->method('find')
+            ->with(1)
+            ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
+        Factories::injectMock('models', CarreraModel::class, $mockCarrera);
 
-        Factories::injectMock('models', MateriaModel::class, $mockMateria);
+        // 3. Mock de MateriaCarreraModel (devuelve arreglo vacío, es decir, no pertenece a la carrera 1)
+        $mockMateriaCarrera = $this->createMock(MateriaCarreraModel::class);
+        $mockMateriaCarrera->method('obtenerCarrerasPorMateria')
+            ->with($idMateria)
+            ->willReturn([]);
+        Factories::injectMock('models', MateriaCarreraModel::class, $mockMateriaCarrera);
 
-        // 3. Mock de InscripcionMateriaModel para evitar conexión real
+        // 4. Mock de InscripcionMateriaModel para evitar conexión real
         $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
+        $mockInscripcionMateria->expects($this->never())->method('generarInscripcion');
         Factories::injectMock('models', InscripcionMateriaModel::class, $mockInscripcionMateria);
 
-        // 4. Realizar petición GET
+        // 5. Realizar petición GET
         $sessionData = [
             'logueado'   => true,
             'id_usuario' => $idUsuario,
@@ -166,7 +185,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
         $response = $this->withSession($sessionData)
             ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
 
-        // 5. Aserciones: Redirección con error de pertenencia en flashdata
+        // 6. Aserciones: Redirección con error de pertenencia en flashdata
         $response->assertRedirectTo("/mis-materias/{$idUsuario}");
         $response->assertSessionHas('error', 'La materia no pertenece a tu carrera.');
     }
@@ -174,7 +193,6 @@ class InscripcionMateriaTest extends CIUnitTestCase
     /**
      * Proveedores de datos para las pruebas
      */
-
     public static function proveedorInscripcionesExitosas(): array
     {
         return [

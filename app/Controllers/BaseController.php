@@ -39,7 +39,9 @@ abstract class BaseController extends Controller
         // Caution: Do not edit this line.
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
-        // $this->session = service('session');
+        // Evitar el almacenamiento en caché del navegador en todas las páginas (resuelve el botón Atrás)
+        $this->response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $this->response->setHeader('Pragma', 'no-cache');
+        $this->response->setHeader('Expires', 'Wed, 11 Jan 1984 05:00:00 GMT');
     }
 }

@@ -18,45 +18,35 @@ class NotaModel extends Model
     ];
 
     // ----------------------------------------------------------
-    // registrarNota(id_docente, id_materia, id_alumno, nota)
-
-    // 1. Verifica que el docente sea titular de la materia
-    // 2. Obtiene el id_inscripcion del alumno en esa materia
-    // 3. Calcula el estado según la nota (>= 6 Aprobado)
-    // 4. Inserta en nota_cursada
+    // obtenerNotaPorInscripcion(id_inscripcion)
     // ----------------------------------------------------------
-    public function registrarNota(int $id_docente, int $id_materia, int $id_alumno, int $nota): bool
+    public function obtenerNotaPorInscripcion(int $id_inscripcion): ?array
     {
-        // Validar que el docente sea titular de la materia
-        $esTitular = $this->db->table('materias')
-            ->where('id_materia', $id_materia)
-            ->where('id_usuario', $id_docente)
-            ->countAllResults();
-
-        if (!$esTitular) return false;
-
-        // Obtener el id_inscripcion del alumno en esa materia
-        $inscripcion = $this->db->table('inscripcion_materia')
-            ->select('id_inscripcion')
-            ->where('id_usuario', $id_alumno)
-            ->where('id_materia', $id_materia)
+        return $this->db->table($this->table)
+            ->where('id_inscripcion', $id_inscripcion)
             ->get()
             ->getRowArray();
+    }
 
-        if (!$inscripcion) return false;
-
+    // ----------------------------------------------------------
+    // registrarNotaDirecta(id_inscripcion, nota)
+    // Inserta o actualiza la nota de una inscripción.
+    // Solo interactúa con la tabla nota_cursada.
+    // ----------------------------------------------------------
+    public function registrarNotaDirecta(int $id_inscripcion, int $nota): bool
+    {
         // Calcular estado según la nota
         $estado = ($nota >= 6) ? 'Aprobado' : 'Desaprobado';
 
         // Verificar si ya existe una nota registrada para esta inscripción
-        $existeNota = $this->db->table('nota_cursada')
-            ->where('id_inscripcion', $inscripcion['id_inscripcion'])
+        $existeNota = $this->db->table($this->table)
+            ->where('id_inscripcion', $id_inscripcion)
             ->countAllResults();
 
         if ($existeNota > 0) {
             // Actualizar la nota existente
-            $this->db->table('nota_cursada')
-                ->where('id_inscripcion', $inscripcion['id_inscripcion'])
+            $this->db->table($this->table)
+                ->where('id_inscripcion', $id_inscripcion)
                 ->update([
                     'nota'       => $nota,
                     'estado'     => $estado,
@@ -64,8 +54,8 @@ class NotaModel extends Model
                 ]);
         } else {
             // Insertar una nueva nota
-            $this->db->table('nota_cursada')->insert([
-                'id_inscripcion' => $inscripcion['id_inscripcion'],
+            $this->db->table($this->table)->insert([
+                'id_inscripcion' => $id_inscripcion,
                 'nota'           => $nota,
                 'estado'         => $estado,
                 'fecha_nota'     => date('Y-m-d'),
@@ -73,24 +63,5 @@ class NotaModel extends Model
         }
 
         return true;
-    }
-
-    // ----------------------------------------------------------
-    // obtenerAlumnosInscriptos(id_materia)
-    //
-    // Trae la lista de alumnos inscriptos a la materia
-    // con su nota y estado si ya la tienen cargada.
-    // Si un alumno no tiene nota todavía, igual aparece en la lista.
-    // ----------------------------------------------------------
-    public function obtenerAlumnosInscriptos(int $id_materia): array
-    {
-        return $this->db->table('inscripcion_materia im')
-            ->join('usuarios u',      'u.id_usuario = im.id_usuario', 'inner')
-            ->join('nota_cursada nc', 'nc.id_inscripcion = im.id_inscripcion', 'left')
-            ->select('u.id_usuario, u.nombre, u.apellido, u.dni, nc.nota, nc.estado, nc.fecha_nota')
-            ->where('im.id_materia', $id_materia)
-            ->orderBy('u.apellido', 'ASC')
-            ->get()
-            ->getResultArray();
     }
 }

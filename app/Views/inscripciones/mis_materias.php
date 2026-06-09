@@ -118,5 +118,14 @@
 
 </div>
 
+<script>
+    // Forzar recarga de página al volver atrás en el historial del navegador (bfcache)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+</script>
+
 </body>
 </html>
