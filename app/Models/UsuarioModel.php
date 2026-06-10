@@ -27,15 +27,15 @@ class UsuarioModel extends Model
 
     // VALIDARCREDENCIALES
 
-    public function validarCredenciales(string $email, string $contrasena)
+    public function validarCredenciales(string $email, string $contrasena): array
     {
         $usuario = $this->db->table('usuarios')
             ->where('email', $email)
             ->where('pass', $contrasena)
             ->get()
-            ->getRowArray(); // Retorna un array o null
+            ->getRowArray();
 
-        return $usuario ?: false; // Si es null → false
+        return $usuario ?: false;
     }
 
     // INSERTARUSUARIO
