@@ -12,7 +12,7 @@ class CarreraModel extends Model
 
     // Retorna todas las carreras ordenadas por nombre.
 
-    public function getCarreras(): array
+    public function obtenerCarreras(): array
     {
         return $this->db->table('carrera')
             ->orderBy('nombre', 'ASC')

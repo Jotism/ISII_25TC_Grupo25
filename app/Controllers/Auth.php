@@ -81,7 +81,7 @@ class Auth extends BaseController
 
     // CERRAR SESIÓN
 
-    public function logout()
+    public function cerrarSesion()
     {
         session()->destroy();
         return redirect()->to('/login');

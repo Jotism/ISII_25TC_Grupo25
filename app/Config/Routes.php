@@ -17,7 +17,7 @@ $routes->get('auth/registro',       'Auth::registro');
 $routes->post('auth/guardarRegistro','Auth::guardarRegistro');
  
 // Logout
-$routes->get('auth/logout', 'Auth::logout');
+$routes->get('auth/logout', 'Auth::cerrarSesion');
  
 // -------------------------------------------------------
 // RUTAS DEL DASHBOARD

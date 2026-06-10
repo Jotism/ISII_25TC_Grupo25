@@ -18,7 +18,7 @@ class AdminController extends BaseController
 
         $materiasRaw = $materiaModel->findAll();
         $relaciones  = $materiaCarreraModel->obtenerRelaciones();
-        $carreras    = $carreraModel->getCarreras();
+        $carreras    = $carreraModel->obtenerCarreras();
 
         // Indexar carreras por su id para búsquedas rápidas
         $carrerasIndexed = [];
@@ -57,7 +57,7 @@ class AdminController extends BaseController
     public function crearMateria()
     {
         $modeloCarrera = new CarreraModel();
-        $carreras      = $modeloCarrera->getCarreras(); // para el <select>
+        $carreras      = $modeloCarrera->obtenerCarreras(); // para el <select>
 
         return view('admin/crear_materia', [
             'carreras' => $carreras,
@@ -117,7 +117,7 @@ class AdminController extends BaseController
             'id_carrera'      => $id_carrera,
         ];
 
-        $carreras = $carreraModel->getCarreras();       // todas las carreras para el select
+        $carreras = $carreraModel->obtenerCarreras();       // todas las carreras para el select
 
         return view('admin/editar_materia', [
             'materia'  => $materia,

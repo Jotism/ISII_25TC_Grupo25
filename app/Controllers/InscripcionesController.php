@@ -37,7 +37,7 @@ class InscripcionesController extends BaseController
         }
 
         // Todas las carreras disponibles para el select
-        $todasCarreras = $modeloCarrera->getCarreras();
+        $todasCarreras = $modeloCarrera->obtenerCarreras();
 
         return view('inscripciones/mis_carreras', [
             'miCarrera'     => $miCarrera,
