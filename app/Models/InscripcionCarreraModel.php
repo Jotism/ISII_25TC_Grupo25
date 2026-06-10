@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\EventoAcademico;
+use App\Observers\NotificadorAlumno;
 
 class InscripcionCarreraModel extends Model
 {
@@ -38,6 +40,8 @@ class InscripcionCarreraModel extends Model
             'id_carrera' => $id_carrera,
         ]);
 
+        $this->notificarObservador($id_usuario, $id_carrera);
+
         return true;
     }
 
@@ -51,5 +55,20 @@ class InscripcionCarreraModel extends Model
             ->where('id_usuario', $id_usuario)
             ->where('id_carrera', $id_carrera)
             ->delete();
+    }
+
+    private function notificarObservador(int $id_usuario, int $id_carrera): void
+    {
+        $evento = new EventoAcademico();
+
+        $evento->attach(new NotificadorAlumno());
+
+        $evento->disparar(
+            'INSCRIPCION_CARRERA',
+            [
+                'id_usuario' => $id_usuario,
+                'id_carrera' => $id_carrera
+            ]
+        );
     }
 }

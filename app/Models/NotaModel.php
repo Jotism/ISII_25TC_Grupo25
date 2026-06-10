@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\EventoAcademico;
+use App\Observers\NotificadorAlumno;
 
 class NotaModel extends Model
 {
@@ -61,7 +63,8 @@ class NotaModel extends Model
                 'fecha_nota'     => date('Y-m-d'),
             ]);
         }
-
+        
+        $this->notificarObservador($id_inscripcion, $nota);
         return true;
     }
 
@@ -70,5 +73,20 @@ class NotaModel extends Model
         return $this->db->table('nota_cursada')
             ->where('id_inscripcion', $id_inscripcion)
             ->delete();
+    }
+
+    private function notificarObservador(int $id_inscripcion, int $nota): void
+    {
+        $evento = new EventoAcademico();
+
+        $evento->attach(new NotificadorAlumno());
+
+        $evento->disparar(
+            'NOTA_REGISTRADA',
+            [
+                'id_inscripcion' => $id_inscripcion,
+                'nota' => $nota
+            ]
+        );
     }
 }

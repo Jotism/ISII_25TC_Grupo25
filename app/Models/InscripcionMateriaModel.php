@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\EventoAcademico;
+use App\Observers\NotificadorAlumno;
 
 class InscripcionMateriaModel extends Model
 { 
@@ -57,6 +59,8 @@ class InscripcionMateriaModel extends Model
             $id_materia
         ]);
 
+        $this->notificarObservador($id_usuario, $id_materia);
+
         return true;
     }
 
@@ -80,5 +84,28 @@ class InscripcionMateriaModel extends Model
             ->where('id_materia', $id_materia)
             ->get()
             ->getRowArray();
+    }
+
+    public function buscarInscripcionPorID(int $id_inscripcion): ?array
+    {
+        return $this->db->table($this->table)
+            ->where('id_inscripcion', $id_inscripcion)
+            ->get()
+            ->getRowArray();
+    }
+
+    private function notificarObservador(int $id_usuario, int $id_materia): void
+    {
+        $evento = new EventoAcademico();
+
+        $evento->attach(new NotificadorAlumno());
+
+        $evento->disparar(
+            'INSCRIPCION_MATERIA',
+            [
+                'id_usuario' => $id_usuario,
+                'id_materia' => $id_materia
+            ]
+        );
     }
 }

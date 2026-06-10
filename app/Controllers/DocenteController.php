@@ -131,24 +131,6 @@ class DocenteController extends BaseController
 
         $nombreAlumno = $this->request->getPost('nombre_alumno');
 
-        //***Observador***
-        $usuarioModel = model(UsuarioModel::class);
-        $mailAlumno = $usuarioModel->obtenerEmailUsuario($id_alumno);
-
-        $evento = new EventoAcademico();
-
-        $evento->attach(new NotificadorAlumno());
-
-        $evento->disparar(
-            'NOTA_REGISTRADA',
-            [
-                'correo' => $mailAlumno,
-                'materia' => (string) $materia['nombre'],
-                'nota' => $nota  
-            ]
-        );
-        //***Observador***
-
         return redirect()->to("/docente/alumnos/$id_materia")
             ->with('mensaje', "Nota de $nombreAlumno registrada correctamente.");
     }
