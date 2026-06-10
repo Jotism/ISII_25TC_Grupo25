@@ -79,11 +79,12 @@ class InscripcionMateriaModel extends Model
     // Método auxiliar para buscar inscripción por materia y alumno
     public function buscarInscripcion(int $id_usuario, int $id_materia): ?array
     {
-        return $this->db->table($this->table)
-            ->where('id_usuario', $id_usuario)
-            ->where('id_materia', $id_materia)
-            ->get()
-            ->getRowArray();
+        $query = $this->db->query(
+            "SELECT * FROM buscar_inscripcion(?, ?)",
+            [$id_usuario, $id_materia]
+        );
+
+        return $query->getRowArray();
     }
 
     public function buscarInscripcionPorID(int $id_inscripcion): ?array
