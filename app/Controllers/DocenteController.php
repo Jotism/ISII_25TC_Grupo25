@@ -6,6 +6,8 @@ use App\Models\NotaModel;
 use App\Models\MateriaModel;
 use App\Models\InscripcionMateriaModel;
 use App\Models\UsuarioModel;
+use App\Libraries\EventoAcademico;
+use App\Observers\NotificadorAlumno;
 
 class DocenteController extends BaseController
 {

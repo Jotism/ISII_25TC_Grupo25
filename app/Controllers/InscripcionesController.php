@@ -242,7 +242,7 @@ class InscripcionesController extends BaseController
         $evento->attach(new NotificadorAlumno());
 
         $evento->disparar(
-            'INSCRIPCION_CARRERA',
+            'INSCRIPCION_MATERIA',
             [
                 'correo' => $mailAlumno,
                 'materia' => $nombreMateria
