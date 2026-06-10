@@ -104,7 +104,7 @@ class AdminController extends BaseController
         $materiaCarreraModel = new MateriaCarreraModel();
         $carreraModel        = new CarreraModel();
 
-        $materiaRaw = $materiaModel->find($id);
+        $materiaRaw = $materiaModel->obtenerMateriaPorId($id);
         if (!$materiaRaw) {
             return redirect()->to('/admin/materias')->with('error', 'Materia no encontrada.');
         }
