@@ -8,6 +8,8 @@ use App\Models\MateriaModel;
 use App\Models\CarreraModel;
 use App\Models\MateriaCarreraModel;
 use App\Models\NotaModel;
+use App\Libraries\EventoAcademico;
+use App\Observers\NotificadorAlumno;
 
 class InscripcionesController extends BaseController
 {
@@ -86,6 +88,24 @@ class InscripcionesController extends BaseController
             return redirect()->to('/mis-carreras')
                 ->with('error', 'Ya estás inscripto en esa carrera.');
         }
+
+        //***Observador***
+        $modeloCarrera = model(CarreraModel::class);
+        $mailAlumno = session()->get('email');
+        $nombreCarrera = $modeloCarrera->obtenerNombreCarrera($id_carrera);
+
+        $evento = new EventoAcademico();
+
+        $evento->attach(new NotificadorAlumno());
+
+        $evento->disparar(
+            'INSCRIPCION_CARRERA',
+            [
+                'correo' => $mailAlumno,
+                'carrera' => $nombreCarrera
+            ]
+        );
+        //***Observador***
 
         return redirect()->to('/mis-carreras')
             ->with('mensaje', 'Te inscribiste a la carrera correctamente.');
@@ -186,7 +206,7 @@ class InscripcionesController extends BaseController
 
         $id_carrera = (int) $miCarrera['id_carrera'];
 
-        // Verificar si la materia pertenece a la carrera del alumno (sin JOIN)
+        // Verificar si la materia pertenece a la carrera del alumno
         $materiaCarreraModel = model(MateriaCarreraModel::class);
         $relaciones          = $materiaCarreraModel->obtenerCarrerasPorMateria($id_materia);
 
@@ -213,6 +233,22 @@ class InscripcionesController extends BaseController
 
         $modeloMateria = model(MateriaModel::class);
         $nombreMateria = $modeloMateria->obtenerNombreMateria($id_materia);
+
+        //***Observador***
+        $mailAlumno = session()->get('email');
+
+        $evento = new EventoAcademico();
+
+        $evento->attach(new NotificadorAlumno());
+
+        $evento->disparar(
+            'INSCRIPCION_CARRERA',
+            [
+                'correo' => $mailAlumno,
+                'materia' => $nombreMateria
+            ]
+        );
+        //***Observador***
 
         return redirect()->to('/mis-materias/' . $id_usuario)
             ->with('nombre_materia', $nombreMateria);

@@ -38,11 +38,22 @@ class UsuarioModel extends Model
         return $usuario ?: false; // Si es null → false
     }
 
-
     // INSERTARUSUARIO
 
     public function insertarUsuario(array $datos): bool
     {
         return $this->db->table('usuarios')->insert($datos);
+    }
+
+    // OBTENEREMAILUSUARIO
+    public function obtenerEmailUsuario(int $id_usuario): string
+    {
+        $resultado = $this->db->table('usuarios')
+            ->select('email')
+            ->where('id_usuario', $id_usuario)
+            ->get()
+            ->getRowArray();
+
+        return $resultado['email'] ?? 'usuario no encontrado';
     }
 }

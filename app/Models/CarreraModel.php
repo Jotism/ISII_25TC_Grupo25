@@ -19,4 +19,15 @@ class CarreraModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    public function obtenerNombreCarrera(int $id_carrera): string
+    {
+        $resultado = $this->db->table('carrera')
+            ->select('nombre')
+            ->where('id_carrera', $id_carrera)
+            ->get()
+            ->getRowArray();
+
+        return $resultado['nombre'] ?? 'Carrera desconocida';
+    }
 }
