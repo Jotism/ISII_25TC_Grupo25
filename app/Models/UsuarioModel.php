@@ -27,7 +27,7 @@ class UsuarioModel extends Model
 
     // VALIDARCREDENCIALES
 
-    public function validarCredenciales(string $email, string $contrasena): array
+    public function validarCredenciales(string $email, string $contrasena)
     {
         $usuario = $this->db->table('usuarios')
             ->where('email', $email)
