@@ -8,28 +8,10 @@ use App\Models\CarreraModel;
 
 class AdminController extends BaseController
 {
-    // MÉTODO PRIVADO: verificarAdmin()
-    private function verificarAdmin()
-    {
-        // Si no hay sesión activa → al login
-        if (!session()->get('logueado')) {
-            return redirect()->to('/login');
-        }
-
-        // Si hay sesión pero no es admin → al dashboard
-        if (session()->get('id_perfil') != 1) {
-            return redirect()->to('/dashboard');
-        }
-
-        return null; // Todo OK, puede continuar
-    }
 
     // listarMaterias()
     public function listarMaterias()
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         $materiaModel        = new MateriaModel();
         $materiaCarreraModel = new MateriaCarreraModel();
         $carreraModel        = new CarreraModel();
@@ -74,9 +56,6 @@ class AdminController extends BaseController
     // crearMateria()
     public function crearMateria()
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         $modeloCarrera = new CarreraModel();
         $carreras      = $modeloCarrera->getCarreras(); // para el <select>
 
@@ -90,9 +69,6 @@ class AdminController extends BaseController
     // Inserta en tabla "materias" y luego en "materia_carrera".
     public function guardarMateria()
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         // Datos del formulario
         $nombre          = $this->request->getPost('nombre');
         $anio_cursada    = $this->request->getPost('anio_cursada');
@@ -121,9 +97,6 @@ class AdminController extends BaseController
     // Muestra el formulario pre-cargado con los datos actuales.
     public function editarMateria($id)
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         $materiaModel        = new MateriaModel();
         $materiaCarreraModel = new MateriaCarreraModel();
         $carreraModel        = new CarreraModel();
@@ -156,9 +129,6 @@ class AdminController extends BaseController
     // Recibe los datos del formulario de edición y actualiza BD.
     public function actualizarMateria($id)
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         $nombre          = $this->request->getPost('nombre');
         $anio_cursada    = $this->request->getPost('anio_cursada');
         $id_cuatrimestre = $this->request->getPost('id_cuatrimestre');
@@ -186,9 +156,6 @@ class AdminController extends BaseController
     // Elimina la materia de las tablas materias y materia_carrera.
     public function eliminarMateria($id)
     {
-        $redireccion = $this->verificarAdmin();
-        if ($redireccion) return $redireccion;
-
         $materiaModel        = new MateriaModel();
         $materiaCarreraModel = new MateriaCarreraModel();
 

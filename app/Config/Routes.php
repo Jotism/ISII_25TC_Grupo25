@@ -29,25 +29,20 @@ $routes->get('dashboard', 'Dashboard::index');
 // -------------------------------------------------------
 // RUTAS DEL PANEL ADMIN
 // -------------------------------------------------------
-
-// Lista de materias
-$routes->get('admin/materias', 'AdminController::listarMaterias');
-
-// Mostrar formulario de creación
-$routes->get('admin/materias/crear', 'AdminController::crearMateria');
-
-// Procesar formulario de creación
-$routes->post('admin/materias/guardar', 'AdminController::guardarMateria');
-
-// Mostrar formulario de edición
-$routes->get('admin/materias/editar/(:num)', 'AdminController::editarMateria/$1');
-
-// Procesar formulario de edición
-$routes->post('admin/materias/actualizar/(:num)', 'AdminController::actualizarMateria/$1');
-
-// Eliminar una materia
-$routes->get('admin/materias/eliminar/(:num)', 'AdminController::eliminarMateria/$1');
-
+$routes->group('admin', ['filter' => 'admin'], function($routes) {
+    // Lista de materias
+    $routes->get('materias', 'AdminController::listarMaterias');
+    // Mostrar formulario de creación
+    $routes->get('materias/crear', 'AdminController::crearMateria');
+    // Procesar formulario de creación
+    $routes->post('materias/guardar', 'AdminController::guardarMateria');
+    // Mostrar formulario de edición
+    $routes->get('materias/editar/(:num)', 'AdminController::editarMateria/$1');
+    // Procesar formulario de edición
+    $routes->post('materias/actualizar/(:num)', 'AdminController::actualizarMateria/$1');
+    // Eliminar una materia
+    $routes->get('materias/eliminar/(:num)', 'AdminController::eliminarMateria/$1');
+});
 
 // -------------------------------------------------------
 // CARRERAS
