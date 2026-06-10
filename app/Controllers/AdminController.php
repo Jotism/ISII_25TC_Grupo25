@@ -96,20 +96,20 @@ class AdminController extends BaseController
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia creada correctamente.');
     }
 
-    // editarMateria($id)
+    // editarMateria($id_materia)
     // Muestra el formulario pre-cargado con los datos actuales.
-    public function editarMateria($id)
+    public function editarMateria(int $id_materia)
     {
         $materiaModel        = new MateriaModel();
         $materiaCarreraModel = new MateriaCarreraModel();
         $carreraModel        = new CarreraModel();
 
-        $materiaRaw = $materiaModel->obtenerMateriaPorId($id);
+        $materiaRaw = $materiaModel->obtenerMateriaPorId($id_materia);
         if (!$materiaRaw) {
             return redirect()->to('/admin/materias')->with('error', 'Materia no encontrada.');
         }
 
-        $carrerasRel = $materiaCarreraModel->obtenerCarrerasPorMateria($id);
+        $carrerasRel = $materiaCarreraModel->obtenerCarrerasPorMateria($id_materia);
         $id_carrera = !empty($carrerasRel) ? $carrerasRel[0]['id_carrera'] : null;
 
         $materia = [
@@ -128,9 +128,9 @@ class AdminController extends BaseController
         ]);
     }
 
-    // actualizarMateria($id)
+    // actualizarMateria($id_materia)
     // Recibe los datos del formulario de edición y actualiza BD.
-    public function actualizarMateria($id)
+    public function actualizarMateria(int $id_materia)
     {
         $nombre          = $this->request->getPost('nombre');
         $anio_cursada    = $this->request->getPost('anio_cursada');
@@ -150,24 +150,24 @@ class AdminController extends BaseController
 
         // Paso 2: actualizar la carrera asociada
         // (borra la relación anterior y crea la nueva)
-        $materiaCarreraModel->eliminarPorMateria($id);
-        $materiaCarreraModel->asociarMateriaCarrera($id, $id_carrera);
+        $materiaCarreraModel->eliminarPorMateria($id_materia);
+        $materiaCarreraModel->asociarMateriaCarrera($id_materia, $id_carrera);
 
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia actualizada correctamente.');
     }
 
-    // eliminarMateria($id)
+    // eliminarMateria($id_materia)
     // Elimina la materia de las tablas materias y materia_carrera.
-    public function eliminarMateria($id)
+    public function eliminarMateria(int $id_materia)
     {
         $materiaModel        = new MateriaModel();
         $materiaCarreraModel = new MateriaCarreraModel();
 
         // Paso 1: borrar relación en materia_carrera primero
-        $materiaCarreraModel->eliminarPorMateria($id);
+        $materiaCarreraModel->eliminarPorMateria($id_materia);
 
         // Paso 2: borrar la materia
-        $materiaModel->eliminarMateriaPorId($id);
+        $materiaModel->eliminarMateriaPorId($id_materia);
 
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia eliminada.');
     }
