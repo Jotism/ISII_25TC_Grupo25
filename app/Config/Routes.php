@@ -48,12 +48,12 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
 // RUTAS ALUMNO
 // -------------------------------------------------------
 $routes->group('alumno', ['filter' => 'alumno'], function($routes) {
-    $routes->get('mis-carreras',                    'InscripcionesController::misCarreras');
-    $routes->post('inscribirse-carrera',            'InscripcionesController::inscribirseACarrera');
-    $routes->get('baja-carrera/(:num)',             'InscripcionesController::darseDeBajaCarrera/$1');
-    $routes->get('mis-materias',                 'InscripcionesController::misMaterias/$1');
-    $routes->get('inscribirse-materia/(:num)',   'InscripcionesController::inscribirseAMateria/$1/$2');
-    $routes->get('baja-materia/(:num)',          'InscripcionesController::darseDeBajaMateria/$1/$2');
+    $routes->get('mis-carreras',                    'AlumnoController::misCarreras');
+    $routes->post('inscribirse-carrera',            'AlumnoController::inscribirseACarrera');
+    $routes->get('baja-carrera/(:num)',             'AlumnoController::darseDeBajaCarrera/$1');
+    $routes->get('mis-materias',                 'AlumnoController::misMaterias/$1');
+    $routes->get('inscribirse-materia/(:num)',   'AlumnoController::inscribirseAMateria/$1/$2');
+    $routes->get('baja-materia/(:num)',          'AlumnoController::darseDeBajaMateria/$1/$2');
 });
 
 

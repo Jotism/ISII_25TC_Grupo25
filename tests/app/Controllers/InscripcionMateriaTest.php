@@ -43,7 +43,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
 
         // 2. Mock de CarreraModel
         $mockCarrera = $this->createMock(CarreraModel::class);
-        $mockCarrera->method('find')
+        $mockCarrera->method('obtenerCarreraPorId')
             ->with(1)
             ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
         Factories::injectMock('models', CarreraModel::class, $mockCarrera);
@@ -76,13 +76,14 @@ class InscripcionMateriaTest extends CIUnitTestCase
             'logueado'   => true,
             'id_usuario' => $idUsuario,
             'id_perfil'  => 2, // Alumno
+            'email'      => 'alumno@ejemplo.com',
         ];
 
         $response = $this->withSession($sessionData)
-            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
+            ->get("alumno/inscribirse-materia/{$idMateria}");
 
         // 7. Aserciones: Redirección correcta y flashdata cargado
-        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
+        $response->assertRedirectTo("/alumno/mis-materias/");
         $response->assertSessionHas('nombre_materia', $materiaNombre);
     }
 
@@ -104,7 +105,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
 
         // 2. Mock de CarreraModel
         $mockCarrera = $this->createMock(CarreraModel::class);
-        $mockCarrera->method('find')
+        $mockCarrera->method('obtenerCarreraPorId')
             ->with(1)
             ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
         Factories::injectMock('models', CarreraModel::class, $mockCarrera);
@@ -130,13 +131,14 @@ class InscripcionMateriaTest extends CIUnitTestCase
             'logueado'   => true,
             'id_usuario' => $idUsuario,
             'id_perfil'  => 2, // Alumno
+            'email'      => 'alumno@ejemplo.com',
         ];
 
         $response = $this->withSession($sessionData)
-            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
+            ->get("alumno/inscribirse-materia/{$idMateria}");
 
         // 6. Aserciones: Redirección con mensaje de error adecuado en flashdata
-        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
+        $response->assertRedirectTo("/alumno/mis-materias/");
         $response->assertSessionHas('error', 'Ya estás inscripto en esa materia.');
     }
 
@@ -158,7 +160,7 @@ class InscripcionMateriaTest extends CIUnitTestCase
 
         // 2. Mock de CarreraModel
         $mockCarrera = $this->createMock(CarreraModel::class);
-        $mockCarrera->method('find')
+        $mockCarrera->method('obtenerCarreraPorId')
             ->with(1)
             ->willReturn(['id_carrera' => 1, 'nombre' => 'Tecnicatura en Programación']);
         Factories::injectMock('models', CarreraModel::class, $mockCarrera);
@@ -180,13 +182,14 @@ class InscripcionMateriaTest extends CIUnitTestCase
             'logueado'   => true,
             'id_usuario' => $idUsuario,
             'id_perfil'  => 2, // Alumno
+            'email'      => 'alumno@ejemplo.com',
         ];
 
         $response = $this->withSession($sessionData)
-            ->get("inscribirse-materia/{$idMateria}/{$idUsuario}");
+            ->get("alumno/inscribirse-materia/{$idMateria}");
 
         // 6. Aserciones: Redirección con error de pertenencia en flashdata
-        $response->assertRedirectTo("/mis-materias/{$idUsuario}");
+        $response->assertRedirectTo("/alumno/mis-materias/");
         $response->assertSessionHas('error', 'La materia no pertenece a tu carrera.');
     }
 

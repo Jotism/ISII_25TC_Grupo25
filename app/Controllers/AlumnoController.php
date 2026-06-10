@@ -11,7 +11,7 @@ use App\Models\NotaModel;
 use App\Libraries\EventoAcademico;
 use App\Observers\NotificadorAlumno;
 
-class InscripcionesController extends BaseController
+class AlumnoController extends BaseController
 {
     // SECCIÓN: CARRERAS
 

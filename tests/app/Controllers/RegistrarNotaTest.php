@@ -8,6 +8,7 @@ use CodeIgniter\Config\Factories;
 use App\Models\MateriaModel;
 use App\Models\InscripcionMateriaModel;
 use App\Models\NotaModel;
+use App\Models\UsuarioModel;
 
 /**
  * @internal
@@ -38,10 +39,17 @@ class RegistrarNotaTest extends CIUnitTestCase
 
         // Mock de MateriaModel para validar titularidad
         $mockMateria = $this->createMock(MateriaModel::class);
-        $mockMateria->method('find')
+        $mockMateria->method('obtenerMateriaPorId')
             ->with($idMateria)
-            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente]);
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente, 'nombre' => 'Base de datos 1']);
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
+
+        // Mock de UsuarioModel para evitar llamada real a la base de datos
+        $mockUsuario = $this->createMock(UsuarioModel::class);
+        $mockUsuario->method('obtenerEmailUsuario')
+            ->with($idAlumno)
+            ->willReturn('alumno@correo.com');
+        Factories::injectMock('models', UsuarioModel::class, $mockUsuario);
 
         // Mock de InscripcionMateriaModel para obtener la inscripción
         $mockInscripcionMateria = $this->createMock(InscripcionMateriaModel::class);
@@ -124,11 +132,11 @@ class RegistrarNotaTest extends CIUnitTestCase
         $idAlumno = 9;
         $nota = 8;
 
-        // Mock de MateriaModel: find devuelve una materia asignada a otro docente
+        // Mock de MateriaModel: obtenerMateriaPorId devuelve una materia asignada a otro docente
         $mockMateria = $this->createMock(MateriaModel::class);
-        $mockMateria->method('find')
+        $mockMateria->method('obtenerMateriaPorId')
             ->with($idMateria)
-            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => 6]); // docente titular es el 6, no el $idDocenteNoTitular
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => 6, 'nombre' => 'Base de datos 1']); // docente titular es el 6, no el $idDocenteNoTitular
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
         // No debería interactuar con los otros modelos
@@ -173,9 +181,9 @@ class RegistrarNotaTest extends CIUnitTestCase
 
         // Mock de MateriaModel para validar titularidad
         $mockMateria = $this->createMock(MateriaModel::class);
-        $mockMateria->method('find')
+        $mockMateria->method('obtenerMateriaPorId')
             ->with($idMateria)
-            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente]);
+            ->willReturn(['id_materia' => $idMateria, 'id_usuario' => $idDocente, 'nombre' => 'Base de datos 1']);
         Factories::injectMock('models', MateriaModel::class, $mockMateria);
 
         // Mock de InscripcionMateriaModel: buscarInscripcion devuelve null
