@@ -71,7 +71,7 @@
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="<?= base_url('baja-materia/' . $m['id_materia'] . '/' . session()->get('id_usuario')) ?>"
+                        <a href="<?= base_url('alumno/baja-materia/' . $m['id_materia']) ?>"
                            class="btn-accion btn-accion--rojo"
                            onclick="return confirm('¿Seguro que querés darte de baja de <?= esc($m['nombre']) ?>?')">
                             Darme de baja
@@ -105,7 +105,7 @@
                     <td><?= esc($m['nombre']) ?></td>
                     <td><span class="badge"><?= esc($m['id_cuatrimestre']) ?>° cuat.</span></td>
                     <td>
-                        <a href="<?= base_url('inscribirse-materia/' . $m['id_materia'] . '/' . session()->get('id_usuario')) ?>"
+                        <a href="<?= base_url('alumno/inscribirse-materia/' . $m['id_materia']) ?>"
                            class="btn-accion btn-accion--verde">
                             Inscribirme
                         </a>

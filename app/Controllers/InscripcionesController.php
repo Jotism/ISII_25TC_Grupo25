@@ -13,39 +13,13 @@ use App\Observers\NotificadorAlumno;
 
 class InscripcionesController extends BaseController
 {
-    // ----------------------------------------------------------
-    // PRIVADO: verificarSesion()
-    // Siempre toma el id_usuario de la sesión para validar accesos.
-    // ----------------------------------------------------------
-    private function verificarSesion(int $id_usuario = null)
-    {
-        if (!session()->get('logueado')) {
-            return redirect()->to('/login');
-        }
-
-        // Solo permite el acceso a Alumnos (perfil ID = 2)
-        if (session()->get('id_perfil') != 2) {
-            return redirect()->to('/dashboard');
-        }
-
-        // Seguridad: Evitar que un alumno acceda a los datos de otro (IDOR)
-        if ($id_usuario !== null && $id_usuario !== (int) session()->get('id_usuario')) {
-            return redirect()->to('/dashboard');
-        }
-
-        return null;
-    }
-
     // SECCIÓN: CARRERAS
 
     // misCarreras()
-    // Ruta: GET /mis-carreras
+    // Ruta: GET /alumno/mis-carreras
     // Muestra la carrera del alumno logueado (solo una).
     public function misCarreras()
     {
-        $redireccion = $this->verificarSesion();
-        if ($redireccion) return $redireccion;
-
         $id_usuario = session()->get('id_usuario');
 
         $modeloInscripcion = model(InscripcionCarreraModel::class);
@@ -72,12 +46,9 @@ class InscripcionesController extends BaseController
     }
 
     // inscribirseACarrera()
-    // Ruta: POST /inscribirse-carrera
+    // Ruta: POST /alumno/inscribirse-carrera
     public function inscribirseACarrera()
     {
-        $redireccion = $this->verificarSesion();
-        if ($redireccion) return $redireccion;
-
         $id_usuario = session()->get('id_usuario');
         $id_carrera = (int) $this->request->getPost('id_carrera');
 
@@ -85,7 +56,7 @@ class InscripcionesController extends BaseController
         $resultado = $modelo->generarInscripcion($id_usuario, $id_carrera);
 
         if (!$resultado) {
-            return redirect()->to('/mis-carreras')
+            return redirect()->to('/alumno/mis-carreras')
                 ->with('error', 'Ya estás inscripto en esa carrera.');
         }
 
@@ -107,19 +78,16 @@ class InscripcionesController extends BaseController
         );
         //***Observador***
 
-        return redirect()->to('/mis-carreras')
+        return redirect()->to('/alumno/mis-carreras')
             ->with('mensaje', 'Te inscribiste a la carrera correctamente.');
     }
 
     // darseDeBajaCarrera()
-    // Ruta: GET /baja-carrera/{id_carrera}
+    // Ruta: GET /alumno/baja-carrera/{id_carrera}
     // Da de baja al alumno de su carrera actual.
     // También elimina sus inscripciones a materias de esa carrera y sus notas.
     public function darseDeBajaCarrera(int $id_carrera)
     {
-        $redireccion = $this->verificarSesion();
-        if ($redireccion) return $redireccion;
-
         $id_usuario = session()->get('id_usuario');
 
         $db = \Config\Database::connect();
@@ -152,23 +120,21 @@ class InscripcionesController extends BaseController
 
         $db->transComplete();
 
-        return redirect()->to('/mis-carreras')
+        return redirect()->to('/alumno/mis-carreras')
             ->with('mensaje', 'Te diste de baja de la carrera.');
     }
 
     // SECCIÓN: MATERIAS
 
     // misMaterias()
-    // Ruta: GET /mis-materias/{id_usuario}
-    public function misMaterias(int $id_usuario)
+    // Ruta: GET /alumno/mis-materias/{id_usuario}
+    public function misMaterias()
     {
-        $redireccion = $this->verificarSesion($id_usuario);
-        if ($redireccion) return $redireccion;
-
+        $id_usuario = session()->get('id_usuario');
         // 1. Obtener la carrera del alumno
         $miCarrera = $this->obtenerCarreraDeAlumno($id_usuario);
         if (!$miCarrera) {
-            return redirect()->to('/mis-carreras')
+            return redirect()->to('/alumno/mis-carreras')
                 ->with('error', 'Primero tenés que inscribirte a una carrera.');
         }
 
@@ -191,16 +157,14 @@ class InscripcionesController extends BaseController
     }
 
     // inscribirseAMateria()
-    // Ruta: GET /inscribirse-materia/{id_materia}/{id_usuario}
-    public function inscribirseAMateria(int $id_materia, int $id_usuario)
+    // Ruta: GET /alumno/inscribirse-materia/{id_materia}/{id_usuario}
+    public function inscribirseAMateria(int $id_materia)
     {
-        $redireccion = $this->verificarSesion($id_usuario);
-        if ($redireccion) return $redireccion;
-
+        $id_usuario = session()->get('id_usuario');
         // Obtener la carrera del alumno
         $miCarrera = $this->obtenerCarreraDeAlumno($id_usuario);
         if (!$miCarrera) {
-            return redirect()->to('/mis-materias/' . $id_usuario)
+            return redirect()->to('/alumno/mis-materias/')
                 ->with('error', 'Primero tenés que inscribirte a una carrera.');
         }
 
@@ -219,7 +183,7 @@ class InscripcionesController extends BaseController
         }
 
         if (!$pertenece) {
-            return redirect()->to('/mis-materias/' . $id_usuario)
+            return redirect()->to('/alumno/mis-materias/')
                 ->with('error', 'La materia no pertenece a tu carrera.');
         }
 
@@ -227,7 +191,7 @@ class InscripcionesController extends BaseController
         $resultado = $modeloInscripcionMateria->generarInscripcion($id_usuario, $id_materia);
 
         if (!$resultado) {
-            return redirect()->to('/mis-materias/' . $id_usuario)
+            return redirect()->to('/alumno/mis-materias/')
                 ->with('error', 'Ya estás inscripto en esa materia.');
         }
 
@@ -250,17 +214,15 @@ class InscripcionesController extends BaseController
         );
         //***Observador***
 
-        return redirect()->to('/mis-materias/' . $id_usuario)
+        return redirect()->to('/alumno/mis-materias/')
             ->with('nombre_materia', $nombreMateria);
     }
 
     // darseDeBajaMateria()
-    // Ruta: GET /baja-materia/{id_materia}/{id_usuario}
-    public function darseDeBajaMateria(int $id_materia, int $id_usuario)
+    // Ruta: GET /alumno/baja-materia/{id_materia}/{id_usuario}
+    public function darseDeBajaMateria(int $id_materia)
     {
-        $redireccion = $this->verificarSesion($id_usuario);
-        if ($redireccion) return $redireccion;
-
+        $id_usuario = session()->get('id_usuario');
         $db = \Config\Database::connect();
         $db->transStart();
 
@@ -280,7 +242,7 @@ class InscripcionesController extends BaseController
 
         $db->transComplete();
 
-        return redirect()->to('/mis-materias/' . $id_usuario)
+        return redirect()->to('/alumno/mis-materias/')
             ->with('mensaje', 'Te diste de baja de la materia.');
     }
 

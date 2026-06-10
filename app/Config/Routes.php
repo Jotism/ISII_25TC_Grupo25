@@ -45,18 +45,16 @@ $routes->group('admin', ['filter' => 'admin'], function($routes) {
 });
 
 // -------------------------------------------------------
-// CARRERAS
+// RUTAS ALUMNO
 // -------------------------------------------------------
-$routes->get('mis-carreras',                    'InscripcionesController::misCarreras');
-$routes->post('inscribirse-carrera',            'InscripcionesController::inscribirseACarrera');
-$routes->get('baja-carrera/(:num)',             'InscripcionesController::darseDeBajaCarrera/$1');
- 
-// -------------------------------------------------------
-// MATERIAS (alumno)
-// -------------------------------------------------------
-$routes->get('mis-materias/(:num)',                 'InscripcionesController::misMaterias/$1');
-$routes->get('inscribirse-materia/(:num)/(:num)',   'InscripcionesController::inscribirseAMateria/$1/$2');
-$routes->get('baja-materia/(:num)/(:num)',          'InscripcionesController::darseDeBajaMateria/$1/$2');
+$routes->group('alumno', ['filter' => 'alumno'], function($routes) {
+    $routes->get('mis-carreras',                    'InscripcionesController::misCarreras');
+    $routes->post('inscribirse-carrera',            'InscripcionesController::inscribirseACarrera');
+    $routes->get('baja-carrera/(:num)',             'InscripcionesController::darseDeBajaCarrera/$1');
+    $routes->get('mis-materias',                 'InscripcionesController::misMaterias/$1');
+    $routes->get('inscribirse-materia/(:num)',   'InscripcionesController::inscribirseAMateria/$1/$2');
+    $routes->get('baja-materia/(:num)',          'InscripcionesController::darseDeBajaMateria/$1/$2');
+});
 
 
 /**

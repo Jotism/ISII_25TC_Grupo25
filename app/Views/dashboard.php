@@ -33,10 +33,10 @@
     <?php elseif (session()->get('id_perfil') == 2) : ?>
 
         <p>¿Qué querés gestionar hoy?</p>
-        <a href="<?= base_url('mis-carreras') ?>" class="btn-materias" style="background:#2980b9; display:block; margin-bottom:1rem">
+        <a href="<?= base_url('alumno/mis-carreras') ?>" class="btn-materias" style="background:#2980b9; display:block; margin-bottom:1rem">
              Mis Carreras
         </a>
-        <a href="<?= base_url('mis-materias/' . session()->get('id_usuario')) ?>" class="btn-materias" style="display:block">
+        <a href="<?= base_url('alumno/mis-materias') ?>" class="btn-materias" style="display:block">
              Mis Materias
         </a>
 

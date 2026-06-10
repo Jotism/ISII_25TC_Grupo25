@@ -40,7 +40,7 @@
                 <tr>
                     <td><strong><?= esc($miCarrera['nombre']) ?></strong></td>
                     <td>
-                        <a href="<?= base_url('baja-carrera/' . $miCarrera['id_carrera']) ?>"
+                        <a href="<?= base_url('alumno/baja-carrera/' . $miCarrera['id_carrera']) ?>"
                            class="btn-accion btn-accion--rojo"
                            onclick="return confirm('¿Seguro? También perderás tus inscripciones a materias de esta carrera.')">
                             Darme de baja
@@ -52,7 +52,7 @@
 
         <p style="margin-top:1rem; color:#666; font-size:0.9rem">
             Para inscribirte a materias andá a
-            <a href="<?= base_url('mis-materias/' . session()->get('id_usuario')) ?>">Mis Materias</a>.
+            <a href="<?= base_url('alumno/mis-materias') ?>">Mis Materias</a>.
         </p>
 
     <?php else : ?>
@@ -62,7 +62,7 @@
         </div>
 
         <h2>Inscribirme a una carrera</h2>
-        <form action="<?= base_url('inscribirse-carrera') ?>" method="post">
+        <form action="<?= base_url('alumno/inscribirse-carrera') ?>" method="post">
             <?= csrf_field() ?>
             <label for="id_carrera">Seleccioná una carrera</label>
             <select id="id_carrera" name="id_carrera" required>
