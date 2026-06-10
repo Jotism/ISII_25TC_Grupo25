@@ -62,7 +62,11 @@ $routes->get('baja-materia/(:num)/(:num)',          'InscripcionesController::da
 /**
  * RUTAS DOCENTE
  */
- 
-$routes->get('docente/materias',               'DocenteController::misMaterias');
-$routes->get('docente/alumnos/(:num)',         'DocenteController::verAlumnos/$1');
-$routes->post('docente/registrar-nota',        'DocenteController::registrarNota');
+$routes->group('docente', ['filter' => 'docente'], function($routes) {
+    // Lista de materias del docente
+    $routes->get('materias',               'DocenteController::misMaterias');
+    // Lista de alumnos de una materia del docente
+    $routes->get('alumnos/(:num)',         'DocenteController::verAlumnos/$1');
+    // Procesar registro de nota
+    $routes->post('registrar-nota',        'DocenteController::registrarNota');
+});

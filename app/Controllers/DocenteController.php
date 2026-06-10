@@ -12,31 +12,11 @@ use App\Observers\NotificadorAlumno;
 class DocenteController extends BaseController
 {
     // ----------------------------------------------------------
-    // PRIVADO: verificarDocente()
-    // Solo permite acceso a usuarios con id_perfil = 3 (Docente)
-    // ----------------------------------------------------------
-    private function verificarDocente()
-    {
-        if (!session()->get('logueado')) {
-            return redirect()->to('/login');
-        }
-
-        if (session()->get('id_perfil') != 3) {
-            return redirect()->to('/dashboard');
-        }
-
-        return null;
-    }
-
-    // ----------------------------------------------------------
     // misMaterias()
     // Trae las materias donde id_usuario = id del docente logueado.
     // ----------------------------------------------------------
     public function misMaterias()
     {
-        $redireccion = $this->verificarDocente();
-        if ($redireccion) return $redireccion;
-
         $id_docente = session()->get('id_usuario');
 
         $modelo   = model(MateriaModel::class);
@@ -54,9 +34,6 @@ class DocenteController extends BaseController
     // ----------------------------------------------------------
     public function verAlumnos(int $id_materia)
     {
-        $redireccion = $this->verificarDocente();
-        if ($redireccion) return $redireccion;
-
         $id_docente = session()->get('id_usuario');
 
         $modeloMateria          = model(MateriaModel::class);
@@ -114,9 +91,6 @@ class DocenteController extends BaseController
     // ----------------------------------------------------------
     public function registrarNota()
     {
-        $redireccion = $this->verificarDocente();
-        if ($redireccion) return $redireccion;
-
         $id_docente  = (int) session()->get('id_usuario');
         $id_materia  = (int) $this->request->getPost('id_materia');
         $id_alumno   = (int) $this->request->getPost('id_alumno');
