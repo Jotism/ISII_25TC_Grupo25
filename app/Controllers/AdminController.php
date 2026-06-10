@@ -16,7 +16,7 @@ class AdminController extends BaseController
         $materiaCarreraModel = new MateriaCarreraModel();
         $carreraModel        = new CarreraModel();
 
-        $materiasRaw = $materiaModel->findAll();
+        $materiasRaw = $materiaModel->obtenerMaterias();
         $relaciones  = $materiaCarreraModel->obtenerRelaciones();
         $carreras    = $carreraModel->obtenerCarreras();
 
@@ -79,12 +79,15 @@ class AdminController extends BaseController
         $materiaCarreraModel = new MateriaCarreraModel();
 
         // Paso 1: insertar en tabla "materias"
-        $materiaModel->insert([
-            'nombre'          => $nombre,
-            'anio_cursada'    => $anio_cursada,
-            'id_cuatrimestre' => $id_cuatrimestre,
-        ]);
-        $id_materia = $materiaModel->insertID();
+        $id_materia = $materiaModel->registrarMateria(
+            $nombre,
+            $anio_cursada,
+            $id_cuatrimestre
+        );
+
+        if ($id_materia === null) {
+            return redirect()->to('/admin/materias')->with('error', 'Error al insertar.');
+        }
 
         // Paso 2: insertar en tabla "materia_carrera" para asociar carrera
         $materiaCarreraModel->asociarMateriaCarrera($id_materia, $id_carrera);
@@ -138,11 +141,12 @@ class AdminController extends BaseController
         $materiaCarreraModel = new MateriaCarreraModel();
 
         // Paso 1: actualizar datos de la materia
-        $materiaModel->update($id, [
-            'nombre'          => $nombre,
-            'anio_cursada'    => $anio_cursada,
-            'id_cuatrimestre' => $id_cuatrimestre,
-        ]);
+        $resultado = $materiaModel->actualizarMateria(
+            $id,
+            $nombre,
+            $anio_cursada,
+            $id_cuatrimestre
+        );
 
         // Paso 2: actualizar la carrera asociada
         // (borra la relación anterior y crea la nueva)
@@ -163,7 +167,7 @@ class AdminController extends BaseController
         $materiaCarreraModel->eliminarPorMateria($id);
 
         // Paso 2: borrar la materia
-        $materiaModel->delete($id);
+        $materiaModel->eliminarMateriaPorId($id);
 
         return redirect()->to('/admin/materias')->with('mensaje', 'Materia eliminada.');
     }

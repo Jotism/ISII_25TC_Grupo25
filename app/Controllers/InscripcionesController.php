@@ -33,7 +33,7 @@ class InscripcionesController extends BaseController
         if ($inscripcion) {
             $id_carrera = (int) $inscripcion['id_carrera'];
             // Consultar datos de la carrera
-            $miCarrera = $modeloCarrera->find($id_carrera);
+            $miCarrera = $modeloCarrera->obtenerCarreraPorId($id_carrera);
         }
 
         // Todas las carreras disponibles para el select
@@ -90,9 +90,6 @@ class InscripcionesController extends BaseController
     {
         $id_usuario = session()->get('id_usuario');
 
-        $db = \Config\Database::connect();
-        $db->transStart();
-
         $materiaCarreraModel     = model(MateriaCarreraModel::class);
         $inscripcionMateriaModel = model(InscripcionMateriaModel::class);
         $notaModel               = model(NotaModel::class);
@@ -109,7 +106,7 @@ class InscripcionesController extends BaseController
             if ($inscripcion) {
                 $id_inscripcion = (int) $inscripcion['id_inscripcion'];
                 // Borrar la nota primero para no violar la FK
-                $notaModel->where('id_inscripcion', $id_inscripcion)->delete();
+                $notaModel->eliminarNotaPorInscripcion($id_inscripcion);
                 // Borrar la inscripción de la materia
                 $inscripcionMateriaModel->eliminarInscripcionMateriaDirecta($id_usuario, $id_materia);
             }
@@ -117,8 +114,6 @@ class InscripcionesController extends BaseController
 
         // 3. Borrar inscripción a la carrera
         $inscripcionCarreraModel->darseDeBajaDirecta($id_usuario, $id_carrera);
-
-        $db->transComplete();
 
         return redirect()->to('/alumno/mis-carreras')
             ->with('mensaje', 'Te diste de baja de la carrera.');
@@ -223,8 +218,6 @@ class InscripcionesController extends BaseController
     public function darseDeBajaMateria(int $id_materia)
     {
         $id_usuario = session()->get('id_usuario');
-        $db = \Config\Database::connect();
-        $db->transStart();
 
         $modeloInscripcionMateria = model(InscripcionMateriaModel::class);
         $modeloNota               = model(NotaModel::class);
@@ -234,13 +227,11 @@ class InscripcionesController extends BaseController
         if ($inscripcion) {
             $id_inscripcion = (int) $inscripcion['id_inscripcion'];
             // Borrar la nota para no violar la FK
-            $modeloNota->where('id_inscripcion', $id_inscripcion)->delete();
+            $modeloNota->eliminarNotaPorInscripcion($id_inscripcion);
         }
 
         // Borrar la inscripción a la materia
         $modeloInscripcionMateria->eliminarInscripcionMateriaDirecta($id_usuario, $id_materia);
-
-        $db->transComplete();
 
         return redirect()->to('/alumno/mis-materias/')
             ->with('mensaje', 'Te diste de baja de la materia.');
@@ -263,7 +254,7 @@ class InscripcionesController extends BaseController
             return null;
         }
 
-        return $modeloCarrera->find((int) $inscripcion['id_carrera']);
+        return $modeloCarrera->obtenerCarreraPorId((int) $inscripcion['id_carrera']);
     }
 
     // Obtener materias en las que está inscripto el alumno con sus notas correspondientes en PHP
@@ -282,7 +273,7 @@ class InscripcionesController extends BaseController
             $id_inscripcion = (int) $ins['id_inscripcion'];
 
             // Consultar datos de la materia
-            $materiaRaw = $modeloMateria->find($id_materia);
+            $materiaRaw = $modeloMateria->obtenerMateriaPorId($id_materia);
             if (!$materiaRaw) continue;
 
             // Consultar la nota (si existe) asociada a esa inscripción
@@ -325,7 +316,7 @@ class InscripcionesController extends BaseController
             }
 
             // Consultar los datos de la materia
-            $materiaRaw = $materiaModel->find($id_materia);
+            $materiaRaw = $materiaModel->obtenerMateriaPorId($id_materia);
             if (!$materiaRaw) continue;
 
             $materiasDisponibles[] = [

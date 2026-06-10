@@ -40,4 +40,55 @@ class MateriaModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    public function obtenerMateriaPorId(int $id_materia): array
+    {
+        return $this->db->table('materias')
+            ->select('*')
+            ->where('id_materia', $id_materia)
+            ->get()
+            ->getRowArray();
+    }
+
+    public function obtenerMaterias(): array
+    {
+        return $this->db->table('materias')
+            ->orderBy('nombre', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
+
+    public function registrarMateria(string $nombre, int $anio_cursada, int $id_cuatrimestre): ?int
+    {
+        $resultado = $this->db->table('materias')->insert([
+            'nombre'          => $nombre,
+            'anio_cursada'    => $anio_cursada,
+            'id_cuatrimestre' => $id_cuatrimestre,
+        ]);
+
+        if ($resultado) {
+            return $this->db->insertID();
+        }
+
+        return null;
+    }
+
+    public function actualizarMateria(int $id_materia, string $nombre, int $anio_cursada, int $id_cuatrimestre): bool
+    {
+        return $this->db->table('materias')
+            ->where('id_materia', $id_materia)
+            ->update([
+                'nombre'          => $nombre,
+                'anio_cursada'    => $anio_cursada,
+                'id_cuatrimestre' => $id_cuatrimestre,
+            ]);
+    }
+
+    public function eliminarMateriaPorId(int $id_materia): bool
+    {
+        return $this->db->table('materias')
+            ->where('id_materia', $id_materia)
+            ->delete();
+    }
+
 }

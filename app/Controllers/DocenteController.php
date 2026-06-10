@@ -41,7 +41,7 @@ class DocenteController extends BaseController
         $usuarioModel           = model(UsuarioModel::class);
         $notaModel              = model(NotaModel::class);
 
-        $materia = $modeloMateria->find($id_materia);
+        $materia = $modeloMateria->obtenerMateriaPorId($id_materia);
         if (!$materia) {
             return redirect()->to('/docente/materias')->with('error', 'Materia no encontrada.');
         }
@@ -56,7 +56,7 @@ class DocenteController extends BaseController
             $id_usuario     = (int) $ins['id_usuario'];
 
             // Obtener los datos del alumno de la tabla usuarios
-            $alumnoRaw = $usuarioModel->find($id_usuario);
+            $alumnoRaw = $usuarioModel->obtenerUsuarioPorId($id_usuario);
             if (!$alumnoRaw) continue;
 
             // Obtener la nota asociada de la tabla nota_cursada
@@ -107,7 +107,7 @@ class DocenteController extends BaseController
         $notaModel              = model(NotaModel::class);
 
         // 1. Validar que el docente sea titular de la materia
-        $materia = $materiaModel->find($id_materia);
+        $materia = $materiaModel->obtenerMateriaPorId($id_materia);
         if (!$materia || (int) $materia['id_usuario'] !== $id_docente) {
             return redirect()->to("/docente/alumnos/$id_materia")
                 ->with('error', 'No se pudo registrar la nota. Verificá los datos.');

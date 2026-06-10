@@ -11,7 +11,6 @@ class CarreraModel extends Model
     protected $returnType = 'array';
 
     // Retorna todas las carreras ordenadas por nombre.
-
     public function obtenerCarreras(): array
     {
         return $this->db->table('carrera')
@@ -29,5 +28,14 @@ class CarreraModel extends Model
             ->getRowArray();
 
         return $resultado['nombre'] ?? 'Carrera desconocida';
+    }
+
+    public function obtenerCarreraPorId(int $id_carrera): array
+    {
+        return $this->db->table('carrera')
+            ->select('*')
+            ->where('id_carrera', $id_carrera)
+            ->get()
+            ->getRowArray();
     }
 }

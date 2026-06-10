@@ -56,4 +56,13 @@ class UsuarioModel extends Model
 
         return $resultado['email'] ?? 'usuario no encontrado';
     }
+
+    public function obtenerUsuarioPorId(int $id_usuario): array
+    {
+        return $this->db->table('usuarios')
+            ->select('*')
+            ->where('id_usuario', $id_usuario)
+            ->get()
+            ->getRowArray();
+    }
 }

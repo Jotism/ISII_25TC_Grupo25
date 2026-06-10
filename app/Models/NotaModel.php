@@ -64,4 +64,11 @@ class NotaModel extends Model
 
         return true;
     }
+
+    public function eliminarNotaPorInscripcion(int $id_inscripcion): bool
+    {
+        return $this->db->table('nota_cursada')
+            ->where('id_inscripcion', $id_inscripcion)
+            ->delete();
+    }
 }
